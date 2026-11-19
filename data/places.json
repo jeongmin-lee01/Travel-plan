@@ -1,0 +1,1286 @@
+{
+  "updatedAt": "2026-11-20",
+  "trip": {
+    "days": {
+      "d1": "2026-11-23",
+      "d2": "2026-11-24",
+      "d3": "2026-11-25",
+      "d4": "2026-11-26"
+    }
+  },
+  "places": [
+    {
+      "id": "kix",
+      "type": "fixed",
+      "name": {
+        "ko": "간사이 국제공항 (KIX)",
+        "ja": "関西国際空港"
+      },
+      "category": "공항",
+      "address": "大阪府泉佐野市泉州空港北1",
+      "lat": 34.4273,
+      "lng": 135.2444,
+      "coordsApprox": true,
+      "nearestStation": "간사이쿠코역",
+      "area": "오사카-간사이공항",
+      "availableDates": [
+        "2026-11-23",
+        "2026-11-26"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E9%96%A2%E8%A5%BF%E5%9B%BD%E9%9A%9B%E7%A9%BA%E6%B8%AF%20%E5%A4%A7%E9%98%AA%E5%BA%9C%E6%B3%89%E4%BD%90%E9%87%8E%E5%B8%82%E6%B3%89%E5%B7%9E%E7%A9%BA%E6%B8%AF%E5%8C%971",
+      "hours": {
+        "text": "11/23 10:45 도착 / 11/26 16:05 도착 목표(17:35 출국)"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 0,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [],
+      "needsCheck": [
+        "coords"
+      ],
+      "notes": "출입국 시각은 사용자 제공 정보. 난카이 라피트 난바~공항 약 34분, 1,490엔 안팎(여행 블로그 기준, 공식 확인 필요: 프롬프트 3에서 조사)."
+    },
+    {
+      "id": "hotel",
+      "type": "fixed",
+      "name": {
+        "ko": "Folio Sakura Shinsaibashi Osaka by Banyan Group",
+        "ja": "Folio Sakura Shinsaibashi Osaka"
+      },
+      "category": "숙소",
+      "address": null,
+      "lat": null,
+      "lng": null,
+      "coordsApprox": false,
+      "nearestStation": "신사이바시역(추정)",
+      "area": "오사카-신사이바시/난바",
+      "availableDates": [
+        "2026-11-23",
+        "2026-11-24",
+        "2026-11-25",
+        "2026-11-26"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Folio%20Sakura%20Shinsaibashi%20Osaka%20",
+      "hours": {
+        "text": "3박. 체크인 전 짐 보관 가능 여부 확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "확인 필요",
+        "link": null,
+        "opensAt": null,
+        "note": "짐 보관(11/23 체크인 전, 11/26 체크아웃 후) 가능 여부·시간을 숙소에 확인"
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 0,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [],
+      "needsCheck": [
+        "address",
+        "coords",
+        "luggageStorage"
+      ],
+      "notes": "정확한 주소·좌표는 예약 확인서에서 입력 필요."
+    },
+    {
+      "id": "usj",
+      "type": "fixed",
+      "name": {
+        "ko": "유니버설 스튜디오 재팬",
+        "ja": "ユニバーサル・スタジオ・ジャパン"
+      },
+      "category": "테마파크",
+      "address": "大阪府大阪市此花区桜島2-1-33",
+      "lat": 34.6654,
+      "lng": 135.4323,
+      "coordsApprox": true,
+      "nearestStation": "유니버설시티역",
+      "area": "오사카-USJ",
+      "availableDates": [
+        "2026-11-25"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%83%A6%E3%83%8B%E3%83%90%E3%83%BC%E3%82%B5%E3%83%AB%E3%83%BB%E3%82%B9%E3%82%BF%E3%82%B8%E3%82%AA%E3%83%BB%E3%82%B8%E3%83%A3%E3%83%91%E3%83%B3%20%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E6%AD%A4%E8%8A%B1%E5%8C%BA%E6%A1%9C%E5%B3%B62-1-33",
+      "hours": {
+        "text": "11/25 개장·폐장 시각 확인 필요(공식 달력 미확인). 공식 개장 시각보다 15~30분 일찍 열리는 경우가 있음(제3자 사이트)"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [
+        "11/25부터 시작되는 「조이 오브 라이츠」 특별관람 구역권 판매 기간 시작(제3자 사이트)"
+      ],
+      "reservation": {
+        "kind": "필수",
+        "link": "https://www.usj.co.jp/web/ja/jp",
+        "opensAt": null,
+        "note": "날짜 지정 입장권 필수. 슈퍼 닌텐도 월드 입장 방식(입장확약권·정리권) 11/25 기준 확인 필요. 익스프레스 패스 구매 여부 결정."
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 600,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://happyell.co.jp/usjhowtoturn/2026-11-25",
+          "checkedAt": "2026-11-20",
+          "note": "제3자 공략 사이트. 개장 시각 수치는 확인 못 함"
+        },
+        {
+          "url": "https://www.usj.co.jp/web/ja/jp/calendar",
+          "checkedAt": "2026-11-20",
+          "note": "공식 달력. 도구로는 시각 읽지 못함"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "nintendoWorldEntry",
+        "ticket"
+      ],
+      "notes": "유일한 필수 장소."
+    },
+    {
+      "id": "kyoto-station",
+      "type": "fixed",
+      "name": {
+        "ko": "교토역",
+        "ja": "京都駅"
+      },
+      "category": "교통 거점",
+      "address": "京都府京都市下京区東塩小路高倉町",
+      "lat": 34.9858,
+      "lng": 135.7588,
+      "coordsApprox": true,
+      "nearestStation": "교토역",
+      "area": "교토-교토역 주변",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E4%BA%AC%E9%83%BD%E9%A7%85%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8B%E4%BA%AC%E5%8C%BA%E6%9D%B1%E5%A1%A9%E5%B0%8F%E8%B7%AF%E9%AB%98%E5%80%89%E7%94%BA",
+      "hours": {
+        "text": "교통 거점(영업시간 해당 없음)"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 0,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [],
+      "needsCheck": [
+        "coords"
+      ],
+      "notes": "오사카↔교토 이동 노선(JR 신쾌속/한큐 등)은 프롬프트 3에서 조사."
+    },
+    {
+      "id": "animate-nipponbashi",
+      "type": "candidate",
+      "name": {
+        "ko": "애니메이트 오사카 닛폰바시점",
+        "ja": "アニメイト大阪日本橋店"
+      },
+      "category": "애니메이션 굿즈",
+      "address": "大阪府大阪市浪速区日本橋西1-1-3 アニメイトビル1・2F",
+      "lat": 34.66,
+      "lng": 135.507,
+      "coordsApprox": true,
+      "nearestStation": "닛폰바시역",
+      "area": "오사카-닛폰바시",
+      "availableDates": [
+        "2026-11-23",
+        "2026-11-26"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%82%A2%E3%83%8B%E3%83%A1%E3%82%A4%E3%83%88%E5%A4%A7%E9%98%AA%E6%97%A5%E6%9C%AC%E6%A9%8B%E5%BA%97%20%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E6%B5%AA%E9%80%9F%E5%8C%BA%E6%97%A5%E6%9C%AC%E6%A9%8B%E8%A5%BF1-1-3%20%E3%82%A2%E3%83%8B%E3%83%A1%E3%82%A4%E3%83%88%E3%83%93%E3%83%AB1%E3%83%BB2F",
+      "hours": {
+        "weekday": "11:00-20:00",
+        "weekendHoliday": "10:00-20:00",
+        "text": "평일 11:00-20:00, 토일공휴일 10:00-20:00"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [
+        "11/23은 공휴일이라 10:00 오픈 시간 적용 예상(확인 필요)"
+      ],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 40,
+        "estimated": true
+      },
+      "chainGroup": "animate",
+      "sources": [
+        {
+          "url": "https://www.navitime.co.jp/category/0208011/",
+          "checkedAt": "2026-11-20",
+          "note": "제3자(나비타임). 휴무일 기재 없음"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "coords"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "parco-shinsaibashi",
+      "type": "candidate",
+      "name": {
+        "ko": "파르코 신사이바시",
+        "ja": "心斎橋PARCO"
+      },
+      "category": "쇼핑몰",
+      "address": "大阪府大阪市中央区心斎橋筋1-8-3",
+      "lat": 34.6712,
+      "lng": 135.5013,
+      "coordsApprox": true,
+      "nearestStation": "신사이바시역",
+      "area": "오사카-신사이바시/난바",
+      "availableDates": [
+        "2026-11-23",
+        "2026-11-26"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E5%BF%83%E6%96%8E%E6%A9%8BPARCO%20%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E5%BF%83%E6%96%8E%E6%A9%8B%E7%AD%8B1-8-3",
+      "hours": {
+        "text": "확인 필요 (2026년 2~10월 대규모 리뉴얼 진행, 영업시간 변경 가능)"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 60,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://osaka-info.jp/special/universal/tourism/shinsaibashiparco/",
+          "checkedAt": "2026-11-20",
+          "note": "관 전체 영업시간 못 찾음"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "coords"
+      ],
+      "notes": "숙소와 같은 신사이바시 권역."
+    },
+    {
+      "id": "gu-namba-marui",
+      "type": "candidate",
+      "name": {
+        "ko": "GU 난바 마루이점",
+        "ja": "GU 難波マルイ店"
+      },
+      "category": "의류",
+      "address": "大阪府大阪市中央区難波3-8-9 なんばマルイ内(추정)",
+      "lat": 34.6659,
+      "lng": 135.5016,
+      "coordsApprox": true,
+      "nearestStation": "난바역",
+      "area": "오사카-신사이바시/난바",
+      "availableDates": [
+        "2026-11-23",
+        "2026-11-26"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=GU%20%E9%9B%A3%E6%B3%A2%E3%83%9E%E3%83%AB%E3%82%A4%E5%BA%97%20%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A4%A7%E9%98%AA%E5%B8%82%E4%B8%AD%E5%A4%AE%E5%8C%BA%E9%9B%A3%E6%B3%A23-8-9%20%E3%81%AA%E3%82%93%E3%81%B0%E3%83%9E%E3%83%AB%E3%82%A4%E5%86%85(%EC%B6%94%EC%A0%95)",
+      "hours": {
+        "text": "확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 30,
+        "estimated": true
+      },
+      "chainGroup": "gu",
+      "sources": [],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "address",
+        "coords"
+      ],
+      "notes": "GU 지점 중 숙소와 가장 가까운 후보."
+    },
+    {
+      "id": "wargo-gion",
+      "type": "candidate",
+      "name": {
+        "ko": "와르고 기온점",
+        "ja": "WARGO 祇園店"
+      },
+      "category": "기념품점(추정)",
+      "address": null,
+      "lat": null,
+      "lng": null,
+      "coordsApprox": false,
+      "nearestStation": "기온시조역(추정)",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=WARGO%20%E7%A5%87%E5%9C%92%E5%BA%97%20",
+      "hours": {
+        "text": "확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 20,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "검색 결과 없음",
+          "checkedAt": "2026-11-20",
+          "note": "검색에서 점포 정보를 찾지 못함"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "address",
+        "coords",
+        "category"
+      ],
+      "notes": "구글맵 저장 목록의 점포. 정보가 없어 주소·좌표 비워 둠."
+    },
+    {
+      "id": "edion-kawaramachi",
+      "type": "candidate",
+      "name": {
+        "ko": "에디온 교토 가와라마치 본점",
+        "ja": "エディオン京都河原町本店"
+      },
+      "category": "전자제품",
+      "address": "京都府京都市中京区(가와라마치 일대)",
+      "lat": 35.0037,
+      "lng": 135.7684,
+      "coordsApprox": true,
+      "nearestStation": "한큐 가와라마치역",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%82%A8%E3%83%87%E3%82%A3%E3%82%AA%E3%83%B3%E4%BA%AC%E9%83%BD%E6%B2%B3%E5%8E%9F%E7%94%BA%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%AD%E4%BA%AC%E5%8C%BA(%EA%B0%80%EC%99%80%EB%9D%BC%EB%A7%88%EC%B9%98%20%EC%9D%BC%EB%8C%80)",
+      "hours": {
+        "weekday": "10:30-21:00",
+        "weekendHoliday": "10:00-21:00",
+        "text": "출처마다 폐점 20:00/21:00로 다름"
+      },
+      "lastEntry": null,
+      "closedDays": [
+        "무휴(제3자 표기)"
+      ],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 40,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://www.gltjp.com/ja/directory/item/17010/",
+          "checkedAt": "2026-11-20",
+          "note": "제3자 정보. 폐점 시각 불일치"
+        },
+        {
+          "url": "https://network.mobile.rakuten.co.jp/shop-detail/7745/",
+          "checkedAt": "2026-11-20"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "coords",
+        "address"
+      ],
+      "notes": "전화 075-213-6021"
+    },
+    {
+      "id": "champion-kyoto",
+      "type": "candidate",
+      "name": {
+        "ko": "CHAMPION 교토 본점",
+        "ja": "CHAMPION -チャンピオン- 京都本店"
+      },
+      "category": "트레이딩카드",
+      "address": "京都府京都市中京区六角通柳馬場東入井筒屋町399 シティライト六角1F",
+      "lat": 35.0069,
+      "lng": 135.7647,
+      "coordsApprox": true,
+      "nearestStation": "가라스마오이케역/가와라마치역",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=CHAMPION%20-%E3%83%81%E3%83%A3%E3%83%B3%E3%83%94%E3%82%AA%E3%83%B3-%20%E4%BA%AC%E9%83%BD%E6%9C%AC%E5%BA%97%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%AD%E4%BA%AC%E5%8C%BA%E5%85%AD%E8%A7%92%E9%80%9A%E6%9F%B3%E9%A6%AC%E5%A0%B4%E6%9D%B1%E5%85%A5%E4%BA%95%E7%AD%92%E5%B1%8B%E7%94%BA399%20%E3%82%B7%E3%83%86%E3%82%A3%E3%83%A9%E3%82%A4%E3%83%88%E5%85%AD%E8%A7%921F",
+      "hours": {
+        "text": "매일 11:00-20:00 (제3자)"
+      },
+      "lastEntry": null,
+      "closedDays": [
+        "부정기 휴무"
+      ],
+      "exceptions": [
+        "부정기 휴무라 당일 공식 X(트위터) 확인 필요"
+      ],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 30,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://torecamap.co.jp/shops/kyoto/r26001/s26001005/1301",
+          "checkedAt": "2026-11-20",
+          "note": "카드숍 검색 사이트, 공식 아님"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "coords"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "gigo-shinkyogoku",
+      "type": "candidate",
+      "name": {
+        "ko": "GiGO 교토 신쿄고쿠",
+        "ja": "GiGO 京都新京極"
+      },
+      "category": "게임센터",
+      "address": "京都府京都市中京区新京極通(추정)",
+      "lat": 35.005,
+      "lng": 135.769,
+      "coordsApprox": true,
+      "nearestStation": "한큐 가와라마치역",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=GiGO%20%E4%BA%AC%E9%83%BD%E6%96%B0%E4%BA%AC%E6%A5%B5%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%AD%E4%BA%AC%E5%8C%BA%E6%96%B0%E4%BA%AC%E6%A5%B5%E9%80%9A(%EC%B6%94%EC%A0%95)",
+      "hours": {
+        "text": "확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 30,
+        "estimated": true
+      },
+      "chainGroup": "gigo",
+      "sources": [
+        {
+          "url": "https://map.yahoo.co.jp/v3/place/vHbyETKk2b2",
+          "checkedAt": "2026-11-20",
+          "note": "시각 정보 없음"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "address",
+        "coords"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "gigo-kawaramachi-opa",
+      "type": "candidate",
+      "name": {
+        "ko": "GiGO 가와라마치 오파",
+        "ja": "GiGO 河原町オーパ"
+      },
+      "category": "게임센터",
+      "address": "京都府京都市中京区河原町通四条上る 河原町OPA 내",
+      "lat": 35.0039,
+      "lng": 135.7698,
+      "coordsApprox": true,
+      "nearestStation": "한큐 가와라마치역",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=GiGO%20%E6%B2%B3%E5%8E%9F%E7%94%BA%E3%82%AA%E3%83%BC%E3%83%91%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%AD%E4%BA%AC%E5%8C%BA%E6%B2%B3%E5%8E%9F%E7%94%BA%E9%80%9A%E5%9B%9B%E6%9D%A1%E4%B8%8A%E3%82%8B%20%E6%B2%B3%E5%8E%9F%E7%94%BAOPA%20%EB%82%B4",
+      "hours": {
+        "text": "건물 전체 11:00-21:00(2026-01 이전 정보). GiGO 단독 시각 확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [
+        "가와라마치 오파는 2026-09-19 리뉴얼 오픈 → 층·시간 변경 가능"
+      ],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 30,
+        "estimated": true
+      },
+      "chainGroup": "gigo",
+      "sources": [
+        {
+          "url": "https://www.walkerplus.com/spot/ar0726s04577/",
+          "checkedAt": "2026-11-20",
+          "note": "건물 전체 시간"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "coords"
+      ],
+      "notes": "같은 건물에 GiGO가 B1F, 7F 두 곳 있음(7F/B1F 어느 쪽인지 확인 필요)."
+    },
+    {
+      "id": "surugaya-teramachi",
+      "type": "candidate",
+      "name": {
+        "ko": "스루가야 교토 데라마치점",
+        "ja": "駿河屋 京都寺町店"
+      },
+      "category": "중고 굿즈",
+      "address": "京都府京都市下京区恵美須之町534-2",
+      "lat": 35.0018,
+      "lng": 135.7693,
+      "coordsApprox": true,
+      "nearestStation": "한큐 가와라마치역(도보 3분)",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E9%A7%BF%E6%B2%B3%E5%B1%8B%20%E4%BA%AC%E9%83%BD%E5%AF%BA%E7%94%BA%E5%BA%97%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8B%E4%BA%AC%E5%8C%BA%E6%81%B5%E7%BE%8E%E9%A0%88%E4%B9%8B%E7%94%BA534-2",
+      "hours": {
+        "weekday": "12:00-22:00",
+        "weekendHoliday": "10:00-22:00",
+        "text": "평일 12:00-22:00, 토일공휴일 10:00-22:00"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 40,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://www.suruga-ya.jp/node/1087",
+          "checkedAt": "2026-11-20",
+          "note": "스루가야 공식 점포 목록(검색 요약)"
+        }
+      ],
+      "needsCheck": [
+        "coords"
+      ],
+      "notes": "전화 075-361-5553. 11/24(화)는 평일이라 12:00 오픈."
+    },
+    {
+      "id": "guf-kyoto",
+      "type": "candidate",
+      "name": {
+        "ko": "Guf 교토",
+        "ja": "Guf 京都店"
+      },
+      "category": "캐릭터 굿즈",
+      "address": "京都府京都市下京区寺町通綾小路下る中之町571 オラクルビル1F~2F",
+      "lat": 35.0013,
+      "lng": 135.7677,
+      "coordsApprox": true,
+      "nearestStation": "한큐 가와라마치역",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Guf%20%E4%BA%AC%E9%83%BD%E5%BA%97%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8B%E4%BA%AC%E5%8C%BA%E5%AF%BA%E7%94%BA%E9%80%9A%E7%B6%BE%E5%B0%8F%E8%B7%AF%E4%B8%8B%E3%82%8B%E4%B8%AD%E4%B9%8B%E7%94%BA571%20%E3%82%AA%E3%83%A9%E3%82%AF%E3%83%AB%E3%83%93%E3%83%AB1F~2F",
+      "hours": {
+        "text": "매일 10:00-22:30 (제3자)"
+      },
+      "lastEntry": null,
+      "closedDays": [
+        "무휴(제3자)"
+      ],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 30,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://livejapan.com/ja/in-kansai/in-pref-kyoto/in-gion_kawaramachi_kiyomizu-dera-temple/spot-lj0013612/",
+          "checkedAt": "2026-11-20",
+          "note": "제3자. 오래된 정보일 수 있음"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "coords"
+      ],
+      "notes": "전화 075-600-7047. 트레이딩카드 전문점이 아니라 캐릭터 굿즈점."
+    },
+    {
+      "id": "mandarake-kyoto",
+      "type": "candidate",
+      "name": {
+        "ko": "만다라케 교토점",
+        "ja": "まんだらけ京都店"
+      },
+      "category": "수집용품",
+      "address": "京都府京都市下京区四条通寺町東入二丁目御旅町35 京都髙島屋S.C. 4F",
+      "lat": 35.003,
+      "lng": 135.769,
+      "coordsApprox": true,
+      "nearestStation": "한큐 가와라마치역",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%81%BE%E3%82%93%E3%81%A0%E3%82%89%E3%81%91%E4%BA%AC%E9%83%BD%E5%BA%97%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8B%E4%BA%AC%E5%8C%BA%E5%9B%9B%E6%9D%A1%E9%80%9A%E5%AF%BA%E7%94%BA%E6%9D%B1%E5%85%A5%E4%BA%8C%E4%B8%81%E7%9B%AE%E5%BE%A1%E6%97%85%E7%94%BA35%20%E4%BA%AC%E9%83%BD%E9%AB%99%E5%B3%B6%E5%B1%8BS.C.%204F",
+      "hours": {
+        "text": "12:00-20:00 (다카시마야 공식)"
+      },
+      "lastEntry": null,
+      "closedDays": [
+        "연중무휴(교토 다카시마야 휴업일 제외)"
+      ],
+      "exceptions": [
+        "다카시마야 교토점은 2026-08-01부터 영업시간 변경. 11/23·11/24 휴업 여부 미확인"
+      ],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 60,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://www.takashimaya.co.jp/kyoto/specialtystores/businesshours/",
+          "checkedAt": "2026-11-20",
+          "note": "공식. 11월 휴업일은 확인 못 함"
+        },
+        {
+          "url": "https://uridoki.net/shops/15344",
+          "checkedAt": "2026-11-20",
+          "note": "무휴 표기(제3자)"
+        }
+      ],
+      "needsCheck": [
+        "closedDays",
+        "coords"
+      ],
+      "notes": "전화 075-255-0777. 같은 건물(다카시마야)에 Nintendo KYOTO 있음."
+    },
+    {
+      "id": "nintendo-kyoto",
+      "type": "candidate",
+      "name": {
+        "ko": "닌텐도 교토점",
+        "ja": "Nintendo KYOTO"
+      },
+      "category": "닌텐도 공식 매장",
+      "address": "京都府京都市下京区四条通寺町東入二丁目御旅町35 京都髙島屋S.C.[T8] 7F",
+      "lat": 35.003,
+      "lng": 135.769,
+      "coordsApprox": true,
+      "nearestStation": "한큐 가와라마치역",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=Nintendo%20KYOTO%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8B%E4%BA%AC%E5%8C%BA%E5%9B%9B%E6%9D%A1%E9%80%9A%E5%AF%BA%E7%94%BA%E6%9D%B1%E5%85%A5%E4%BA%8C%E4%B8%81%E7%9B%AE%E5%BE%A1%E6%97%85%E7%94%BA35%20%E4%BA%AC%E9%83%BD%E9%AB%99%E5%B3%B6%E5%B1%8BS.C.%5BT8%5D%207F",
+      "hours": {
+        "text": "확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [
+        "다카시마야 교토점 11월 휴업일 미확인"
+      ],
+      "reservation": {
+        "kind": "정리권·추첨",
+        "link": "https://x.com/N_Officialstore",
+        "opensAt": null,
+        "note": "혼잡한 날 정리권으로 입장 제한(2023년 개점 때 정보). 정리권 배부는 공식 X(@N_Officialstore)에서 확인. 11/23 공휴일·11/24은 확인 필요."
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 40,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://game.watch.impress.co.jp/docs/news/1539274.html",
+          "checkedAt": "2026-11-20",
+          "note": "2023년 기사. 현재 규칙 아님"
+        },
+        {
+          "url": "https://www.takashimaya.co.jp/kyoto/departmentstore/businesshours/",
+          "checkedAt": "2026-11-20"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "entryRule",
+        "coords"
+      ],
+      "notes": "입장 방식 확인."
+    },
+    {
+      "id": "lashinbang-kyoto2",
+      "type": "candidate",
+      "name": {
+        "ko": "라신반 교토 2호점",
+        "ja": "らしんばん 京都2号店"
+      },
+      "category": "중고 굿즈",
+      "address": null,
+      "lat": null,
+      "lng": null,
+      "coordsApprox": false,
+      "nearestStation": "확인 필요",
+      "area": "교토-가와라마치/시조(추정)",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%82%89%E3%81%97%E3%82%93%E3%81%B0%E3%82%93%20%E4%BA%AC%E9%83%BD2%E5%8F%B7%E5%BA%97%20",
+      "hours": {
+        "text": "확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 40,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "검색 결과 없음",
+          "checkedAt": "2026-11-20",
+          "note": "검색에서 점포 정보를 찾지 못함"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "address",
+        "coords",
+        "area"
+      ],
+      "notes": "구글맵 평점 4.7(704). 위치를 구글맵에서 확인해 입력."
+    },
+    {
+      "id": "pokemon-center-kyoto",
+      "type": "candidate",
+      "name": {
+        "ko": "포켓몬센터 교토",
+        "ja": "ポケモンセンターキョウト"
+      },
+      "category": "포켓몬 공식 매장",
+      "address": "京都府京都市下京区四条通室町東入函谷鉾町78 京都経済センター SUINA室町 2F",
+      "lat": 35.0042,
+      "lng": 135.7595,
+      "coordsApprox": true,
+      "nearestStation": "시조역(지하철)/가라스마역(한큐) 직결",
+      "area": "교토-가와라마치/시조",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%83%9D%E3%82%B1%E3%83%A2%E3%83%B3%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%E3%82%AD%E3%83%A7%E3%82%A6%E3%83%88%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8B%E4%BA%AC%E5%8C%BA%E5%9B%9B%E6%9D%A1%E9%80%9A%E5%AE%A4%E7%94%BA%E6%9D%B1%E5%85%A5%E5%87%BD%E8%B0%B7%E9%89%BE%E7%94%BA78%20%E4%BA%AC%E9%83%BD%E7%B5%8C%E6%B8%88%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC%20SUINA%E5%AE%A4%E7%94%BA%202F",
+      "hours": {
+        "text": "매일 10:00-20:00"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [
+        "임시 휴업·영업시간 변경 가능성(공식 안내)",
+        "11/27 발매 포켓몬카드 상품 판매 방식 공지 있음(여행 기간 아님)"
+      ],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null,
+        "note": "공식 페이지에 입장 정리권 안내 없음. 당일 공식 공지 확인"
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 45,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://shop.pokemon.co.jp/ja/shop/pokemoncenter-kyoto/",
+          "checkedAt": "2026-11-20",
+          "note": "공식"
+        }
+      ],
+      "needsCheck": [
+        "coords"
+      ],
+      "notes": "전화 075-353-0250. 11/23~26 별도 공지는 없었음."
+    },
+    {
+      "id": "yodobashi-kyoto",
+      "type": "candidate",
+      "name": {
+        "ko": "요도바시 카메라 멀티미디어 교토",
+        "ja": "ヨドバシカメラ マルチメディア京都"
+      },
+      "category": "전자제품",
+      "address": "京都府京都市下京区東塩小路町590-2",
+      "lat": 34.9857,
+      "lng": 135.759,
+      "coordsApprox": true,
+      "nearestStation": "교토역(바로 앞)",
+      "area": "교토-교토역 주변",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%83%A8%E3%83%89%E3%83%90%E3%82%B7%E3%82%AB%E3%83%A1%E3%83%A9%20%E3%83%9E%E3%83%AB%E3%83%81%E3%83%A1%E3%83%87%E3%82%A3%E3%82%A2%E4%BA%AC%E9%83%BD%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8B%E4%BA%AC%E5%8C%BA%E6%9D%B1%E5%A1%A9%E5%B0%8F%E8%B7%AF%E7%94%BA590-2",
+      "hours": {
+        "text": "쇼핑 층 9:30-22:00, 일부 매장 시각 다름"
+      },
+      "lastEntry": null,
+      "closedDays": [
+        "연중무휴(제3자 표기)"
+      ],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 90,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail/ar0726s575981/data.html",
+          "checkedAt": "2026-11-20",
+          "note": "제3자"
+        },
+        {
+          "url": "https://www.ymobile.jp/shop/kyoto/B00104887.html",
+          "checkedAt": "2026-11-20",
+          "note": "입점 매장 표기"
+        }
+      ],
+      "needsCheck": [
+        "closedDays"
+      ],
+      "notes": "전화 075-342-3616. 교토역에서 바로 연결되어 교토 오가는 길에 넣기 좋음."
+    },
+    {
+      "id": "bandai-namco-cross-kyoto",
+      "type": "candidate",
+      "name": {
+        "ko": "반다이 남코 크로스 스토어 교토",
+        "ja": "バンダイナムコ Cross Store 京都"
+      },
+      "category": "게임센터·굿즈",
+      "address": "京都府京都市南区西九条鳥居口町1 イオンモールKYOTO Sakura館4F",
+      "lat": 34.9776,
+      "lng": 135.7458,
+      "coordsApprox": true,
+      "nearestStation": "교토역(남쪽, 도보/버스)",
+      "area": "교토-교토역 주변",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%83%90%E3%83%B3%E3%83%80%E3%82%A4%E3%83%8A%E3%83%A0%E3%82%B3%20Cross%20Store%20%E4%BA%AC%E9%83%BD%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E5%8D%97%E5%8C%BA%E8%A5%BF%E4%B9%9D%E6%9D%A1%E9%B3%A5%E5%B1%85%E5%8F%A3%E7%94%BA1%20%E3%82%A4%E3%82%AA%E3%83%B3%E3%83%A2%E3%83%BC%E3%83%ABKYOTO%20Sakura%E9%A4%A84F",
+      "hours": {
+        "text": "10:00-21:00 (2026-11-22 오픈 기사 기준)"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 40,
+        "estimated": true
+      },
+      "chainGroup": null,
+      "sources": [
+        {
+          "url": "https://gamebiz.jp/news/395521",
+          "checkedAt": "2026-11-20",
+          "note": "내부 BN Pictures 스토어 오픈 기사. 매장 영업시간 정리 기사 아님"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "coords"
+      ],
+      "notes": "가와라마치가 아니라 이온몰 교토 사쿠라관(교토역 남쪽). 교토역 쪽 일정과 묶어야 함."
+    },
+    {
+      "id": "animate-kyoto-avanti",
+      "type": "candidate",
+      "name": {
+        "ko": "애니메이트 교토 아반티",
+        "ja": "アニメイト 京都アバンティ"
+      },
+      "category": "애니메이션 굿즈",
+      "address": "京都府京都市南区東九条西山王町31 京都アバンティ 6F",
+      "lat": 34.9807,
+      "lng": 135.76,
+      "coordsApprox": true,
+      "nearestStation": "교토역(하치조구치 바로 앞)",
+      "area": "교토-교토역 주변",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%E3%82%A2%E3%83%8B%E3%83%A1%E3%82%A4%E3%83%88%20%E4%BA%AC%E9%83%BD%E3%82%A2%E3%83%90%E3%83%B3%E3%83%86%E3%82%A3%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E5%8D%97%E5%8C%BA%E6%9D%B1%E4%B9%9D%E6%9D%A1%E8%A5%BF%E5%B1%B1%E7%8E%8B%E7%94%BA31%20%E4%BA%AC%E9%83%BD%E3%82%A2%E3%83%90%E3%83%B3%E3%83%86%E3%82%A3%206F",
+      "hours": {
+        "text": "건물 10:00-21:00(점포마다 다름). 애니메이트 단독 시각 확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 40,
+        "estimated": true
+      },
+      "chainGroup": "animate",
+      "sources": [
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail/ar0313s567032/data.html",
+          "checkedAt": "2026-11-20",
+          "note": "건물 전체 정보"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "coords"
+      ],
+      "notes": "2024-03 리뉴얼. 교토역에서 가까움."
+    },
+    {
+      "id": "gu-kyoto-avanti",
+      "type": "candidate",
+      "name": {
+        "ko": "GU 교토 아반티점",
+        "ja": "GU 京都アバンティ店"
+      },
+      "category": "의류",
+      "address": "京都府京都市南区東九条西山王町31 京都アバンティ内",
+      "lat": 34.9807,
+      "lng": 135.76,
+      "coordsApprox": true,
+      "nearestStation": "교토역",
+      "area": "교토-교토역 주변",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=GU%20%E4%BA%AC%E9%83%BD%E3%82%A2%E3%83%90%E3%83%B3%E3%83%86%E3%82%A3%E5%BA%97%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E5%8D%97%E5%8C%BA%E6%9D%B1%E4%B9%9D%E6%9D%A1%E8%A5%BF%E5%B1%B1%E7%8E%8B%E7%94%BA31%20%E4%BA%AC%E9%83%BD%E3%82%A2%E3%83%90%E3%83%B3%E3%83%86%E3%82%A3%E5%86%85",
+      "hours": {
+        "text": "건물 10:00-21:00(점포마다 다름). GU 단독 시각 확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 30,
+        "estimated": true
+      },
+      "chainGroup": "gu",
+      "sources": [
+        {
+          "url": "https://summer.walkerplus.com/odekake/detail/ar0313s567032/data.html",
+          "checkedAt": "2026-11-20",
+          "note": "건물 전체 정보"
+        }
+      ],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "coords"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "gu-kyoto-yodobashi",
+      "type": "candidate",
+      "name": {
+        "ko": "GU 교토 요도바시점",
+        "ja": "GU 京都ヨドバシ店"
+      },
+      "category": "의류",
+      "address": "京都府京都市下京区東塩小路町590-2 ヨドバシ京都ビル内(추정)",
+      "lat": 34.9857,
+      "lng": 135.759,
+      "coordsApprox": true,
+      "nearestStation": "교토역",
+      "area": "교토-교토역 주변",
+      "availableDates": [
+        "2026-11-24"
+      ],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=GU%20%E4%BA%AC%E9%83%BD%E3%83%A8%E3%83%89%E3%83%90%E3%82%B7%E5%BA%97%20%E4%BA%AC%E9%83%BD%E5%BA%9C%E4%BA%AC%E9%83%BD%E5%B8%82%E4%B8%8B%E4%BA%AC%E5%8C%BA%E6%9D%B1%E5%A1%A9%E5%B0%8F%E8%B7%AF%E7%94%BA590-2%20%E3%83%A8%E3%83%89%E3%83%90%E3%82%B7%E4%BA%AC%E9%83%BD%E3%83%93%E3%83%AB%E5%86%85(%EC%B6%94%EC%A0%95)",
+      "hours": {
+        "text": "확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 30,
+        "estimated": true
+      },
+      "chainGroup": "gu",
+      "sources": [],
+      "needsCheck": [
+        "hours",
+        "closedDays",
+        "address",
+        "coords"
+      ],
+      "notes": ""
+    },
+    {
+      "id": "gu-unnamed",
+      "type": "candidate",
+      "name": {
+        "ko": "GU (지점명 없음)",
+        "ja": "GU"
+      },
+      "category": "의류",
+      "address": null,
+      "lat": null,
+      "lng": null,
+      "coordsApprox": false,
+      "nearestStation": "확인 필요",
+      "area": "확인 필요",
+      "availableDates": [],
+      "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=GU%20",
+      "hours": {
+        "text": "확인 필요"
+      },
+      "lastEntry": null,
+      "closedDays": [],
+      "exceptions": [],
+      "reservation": {
+        "kind": "불필요",
+        "link": null,
+        "opensAt": null
+      },
+      "myReservation": {
+        "time": null,
+        "code": null
+      },
+      "stayMinutes": {
+        "value": 30,
+        "estimated": true
+      },
+      "chainGroup": "gu",
+      "sources": [],
+      "needsCheck": [
+        "branch",
+        "hours",
+        "address",
+        "coords",
+        "area"
+      ],
+      "notes": "구글맵 저장 목록에 지점명이 없음(평점 4.1, 리뷰 3,098건). 지점 확인 전까지 동선에 넣을 수 없음."
+    }
+  ]
+}
