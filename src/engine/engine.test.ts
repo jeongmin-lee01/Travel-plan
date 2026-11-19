@@ -23,7 +23,7 @@ const nameOf = (data: EngineData, id: string) => data.places.find((p) => p.id ==
 
 function show(data: EngineData, sch: DaySchedule): string {
   const rows = sch.stops.map((s) => {
-    const label = s.kind === 'meal' ? (s.mealKind === 'lunch' ? '[점심]' : '[저녁]') : nameOf(data, s.placeId!)
+    const label = nameOf(data, s.placeId!)
     const wait = s.waitMin > 0 ? ` (대기 ${s.waitMin}분)` : ''
     return `    ${toHHMM(s.start)}~${toHHMM(s.end)} ${label}${wait}`
   })

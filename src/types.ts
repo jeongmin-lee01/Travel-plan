@@ -37,12 +37,6 @@ export interface Place {
   notes: string
 }
 
-export interface MealWindow {
-  start: string
-  end: string
-  minutes: number
-}
-
 export interface DayConfig {
   date: DateStr
   label: string
@@ -57,7 +51,6 @@ export interface DayConfig {
     returnBy: string
     deadlineKind?: 'airport'
   } | null
-  meals: { lunch: MealWindow | null; dinner: MealWindow | null } | null
   longHaulRoutes: string[]
 }
 
@@ -122,7 +115,6 @@ export type FlagCode =
   | 'reservation-missing' // 보라: 예약·정리권 필요한데 내 예약 정보 없음
   | 'reservation-late' // 예약 시각에 못 맞춤
   | 'hours-unverified' // 영업시간 확인 필요
-  | 'meal-missed' // 점심·저녁 시간대 확보 실패
   | 'steps-over' // 걸음 수 초과
   | 'day-end-late' // 귀가 시각 초과
   | 'airport-deadline' // 공항 도착 시각을 못 맞춤
@@ -150,9 +142,8 @@ export interface TravelLeg {
 }
 
 export interface StopPlan {
-  kind: 'place' | 'meal'
+  kind: 'place'
   placeId?: string
-  mealKind?: 'lunch' | 'dinner'
   /** 이 장소에 도착한 시각 */
   arrive: Minutes
   /** 실제 시작 시각(영업 시작·예약 대기 후) */

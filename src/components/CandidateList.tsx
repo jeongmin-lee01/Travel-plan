@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react'
 import type { DateStr, DayConfig, EngineData, Place } from '../types'
-import { cityOf, parseHours, rankDays, toHHMM } from '../engine'
+import { cityOf, defaultData, parseHours, rankDays, toHHMM } from '../engine'
 import { fmtDate } from '../lib/format'
 import type { PlanApi } from '../store/usePlan'
 import Badge from './Badge'
+import Button from './Button'
 import { Card } from './Card'
 import Chip from './Chip'
+import LocationSheet from './LocationSheet'
+import RestoreSheet from './RestoreSheet'
 
 type CityFilter = 'all' | 'osaka' | 'kyoto'
 
@@ -36,6 +39,9 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
   const [category, setCategory] = useState('')
   const [onlyToday, setOnlyToday] = useState(true)
   const [onlyUnchecked, setOnlyUnchecked] = useState(false)
+  const [editing, setEditing] = useState<Place | null>(null)
+  const [showRestore, setShowRestore] = useState(false)
+  const hiddenPlaces = defaultData.places.filter((p) => api.userData.hidden.includes(p.id))
 
   const candidates = useMemo(() => data.places.filter((p) => p.type === 'candidate'), [data])
   const categories = useMemo(() => [...new Set(candidates.map((p) => p.category))], [candidates])
@@ -85,6 +91,7 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
         <Chip active={onlyUnchecked} onClick={() => setOnlyUnchecked((v) => !v)}>
           동선에 없는 곳만
         </Chip>
+        {hiddenPlaces.length > 0 && <Chip onClick={() => setShowRestore(true)}>제거한 후보 {hiddenPlaces.length}곳</Chip>}
       </div>
       <label className="block">
         <span className="sr-only">카테고리</span>
@@ -115,7 +122,7 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
           const hrs = parseHours(p, activeDay.date)
           const best = bestDay.get(p.id)
           const reason = noCoords
-            ? '위치를 확인한 뒤 추가할 수 있어요'
+            ? '위치를 지정하면 체크할 수 있어요'
             : !checked && !availableToday
               ? `${activeDay.label}에는 갈 수 없어요 (휴무 또는 지역)`
               : ''
@@ -149,12 +156,35 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
                     <p className="mt-1 text-[0.875rem] text-ink-soft">가장 잘 맞는 날: {dayName(data, best)}</p>
                   )}
                   {reason && <p className="mt-1 text-[0.875rem] text-danger">{reason}</p>}
+                  <div className="mt-1 flex flex-wrap gap-x-3">
+                    <Button variant="ghost" className="px-0 text-base" onClick={() => setEditing(p)}>
+                      {noCoords ? '위치 지정' : '위치 수정'}
+                    </Button>
+                    <Button variant="ghost" className="px-0 text-base" onClick={() => api.removeCandidate(p.id)}>
+                      목록에서 제거
+                    </Button>
+                  </div>
                 </div>
               </Card>
             </li>
           )
         })}
       </ul>
+
+      {editing && (
+        <LocationSheet
+          key={editing.id}
+          place={editing}
+          onClose={() => setEditing(null)}
+          onSave={(loc) => api.setLocation(editing.id, loc)}
+        />
+      )}
+      <RestoreSheet
+        open={showRestore}
+        places={hiddenPlaces}
+        onRestore={api.restoreCandidate}
+        onClose={() => setShowRestore(false)}
+      />
     </section>
   )
 }

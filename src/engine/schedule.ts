@@ -13,7 +13,6 @@ import type { TravelFn } from './travel'
 import { parseHours, toHHMM, toMin } from './time'
 
 /** 소프트 조건 벌점(분 환산) */
-export const MEAL_MISS_PENALTY = 30
 export const OVERFLOW_PENALTY_PER_MIN = 2
 export const STEPS_PENALTY_PER_STEP = 1 / 60
 
@@ -65,8 +64,6 @@ export interface SimState {
   fare: number
   steps: number
   penalty: number
-  lunch: boolean
-  dinner: boolean
 }
 
 const name = (p: Place) => p.name.ko
@@ -74,43 +71,12 @@ const isBlock = (f: Flag) => f.severity === 'block'
 
 export const stayOf = (c: Ctx, p: Place): number => c.stay[p.id] ?? p.stayMinutes.value
 
-/** 점심·저녁: 일정 중 처음으로 그 시간대 안에 쉬는 시점에 먹는다 */
-function tryMeals(s: SimState, c: Ctx): SimState {
-  const meals = c.day.meals
-  if (!meals) return s
-  let st = s
-  for (const kind of ['lunch', 'dinner'] as const) {
-    const w = meals[kind]
-    if (!w || st[kind]) continue
-    if (st.t >= toMin(w.start) && st.t <= toMin(w.end)) {
-      const stop: StopPlan = { kind: 'meal', mealKind: kind, arrive: st.t, start: st.t, end: st.t + w.minutes, waitMin: 0 }
-      st = { ...st, stops: [...st.stops, stop], t: st.t + w.minutes, [kind]: true }
-    }
-  }
-  return st
-}
-
 export function initState(c: Ctx): SimState {
   const fw = c.day.freeWindow
   if (!fw) throw new Error(`${c.day.label}은 후보를 넣을 수 있는 빈 시간이 없어요`)
   const cur = c.places.get(fw.startPlaceId)
   if (!cur) throw new Error(`장소를 찾을 수 없어요: ${fw.startPlaceId}`)
-  return tryMeals(
-    {
-      t: toMin(fw.start),
-      cur,
-      stops: [],
-      flags: [],
-      travelMin: 0,
-      waitMin: 0,
-      fare: 0,
-      steps: 0,
-      penalty: 0,
-      lunch: !c.day.meals?.lunch,
-      dinner: !c.day.meals?.dinner,
-    },
-    c,
-  )
+  return { t: toMin(fw.start), cur, stops: [], flags: [], travelMin: 0, waitMin: 0, fare: 0, steps: 0, penalty: 0 }
 }
 
 /**
@@ -170,21 +136,17 @@ export function step(s: SimState, p: Place, c: Ctx, strict: boolean): SimState |
 
   const end = start + stay
   const stop: StopPlan = { kind: 'place', placeId: p.id, arrive, start, end, waitMin: start - arrive, travel: leg }
-  return tryMeals(
-    {
-      ...s,
-      t: end,
-      cur: p,
-      stops: [...s.stops, stop],
-      flags: [...s.flags, ...flags],
-      travelMin: s.travelMin + leg.minutes,
-      waitMin: s.waitMin + (start - arrive),
-      fare: s.fare + leg.fareYen,
-      steps: s.steps + leg.steps + stay * c.defaults.stepsPerStoreMin,
-      penalty: s.penalty + penalty,
-    },
-    c,
-  )
+  return {
+    t: end,
+    cur: p,
+    stops: [...s.stops, stop],
+    flags: [...s.flags, ...flags],
+    travelMin: s.travelMin + leg.minutes,
+    waitMin: s.waitMin + (start - arrive),
+    fare: s.fare + leg.fareYen,
+    steps: s.steps + leg.steps + stay * c.defaults.stepsPerStoreMin,
+    penalty: s.penalty + penalty,
+  }
 }
 
 export function partialCost(s: SimState): number {
@@ -200,7 +162,6 @@ export function finish(s: SimState, c: Ctx): DaySchedule {
   const endArrive = s.t + leg.minutes + buffer
   const flags = [...s.flags]
   let penalty = s.penalty
-  const placeStops = s.stops.filter((x) => x.kind === 'place').length
 
   const returnBy = toMin(fw.returnBy)
   if (endArrive > returnBy) {
@@ -212,16 +173,6 @@ export function finish(s: SimState, c: Ctx): DaySchedule {
         ? `숙소 복귀 ${toHHMM(endArrive)}: 공항 도착 16:05를 맞추려면 ${toHHMM(returnBy)}까지 돌아와야 해요`
         : `숙소 복귀 ${toHHMM(endArrive)}: 귀가 목표 ${toHHMM(returnBy)}를 넘어요`,
     })
-  }
-
-  if (placeStops > 0 && c.day.meals) {
-    for (const kind of ['lunch', 'dinner'] as const) {
-      const w = c.day.meals[kind]
-      if (w && !s[kind] && endArrive > toMin(w.start) + 30) {
-        penalty += MEAL_MISS_PENALTY
-        flags.push({ code: 'meal-missed', severity: 'warn', message: `${kind === 'lunch' ? '점심' : '저녁'} 시간대(${w.start}~${w.end})를 확보하지 못했어요` })
-      }
-    }
   }
 
   const steps = s.steps + leg.steps

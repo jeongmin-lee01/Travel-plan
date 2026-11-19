@@ -27,15 +27,32 @@
       "city": "오사카",
       "note": "공휴일(근로감사의 날)이라 혼잡 예상",
       "fixed": [
-        { "placeId": "kix", "role": "출발", "at": "11:30", "locked": true, "note": "10:45 도착, 수하물 찾고 11:30경 공항 출발" },
-        { "placeId": "hotel", "role": "짐 맡기기", "at": "12:30", "minutes": 15, "locked": true, "estimated": true, "note": "체크인 전 짐 보관 가능 여부 확인 필요" }
+        {
+          "placeId": "kix",
+          "role": "출발",
+          "at": "11:30",
+          "locked": true,
+          "note": "10:45 도착, 수하물 찾고 11:30경 공항 출발"
+        },
+        {
+          "placeId": "hotel",
+          "role": "짐 맡기기",
+          "at": "12:30",
+          "minutes": 15,
+          "locked": true,
+          "estimated": true,
+          "note": "체크인 전 짐 보관 가능 여부 확인 필요"
+        }
       ],
-      "freeWindow": { "startPlaceId": "hotel", "start": "12:45", "endPlaceId": "hotel", "returnBy": "21:00" },
-      "meals": {
-        "lunch": { "start": "11:30", "end": "14:00", "minutes": 60 },
-        "dinner": { "start": "17:30", "end": "20:00", "minutes": 60 }
+      "freeWindow": {
+        "startPlaceId": "hotel",
+        "start": "12:45",
+        "endPlaceId": "hotel",
+        "returnBy": "21:00"
       },
-      "longHaulRoutes": ["kix-osaka"]
+      "longHaulRoutes": [
+        "kix-osaka"
+      ]
     },
     {
       "date": "2026-11-24",
@@ -44,15 +61,29 @@
       "city": "교토",
       "note": "공휴일 다음 날이라 대체 휴관하는 시설이 있을 수 있음",
       "fixed": [
-        { "placeId": "hotel", "role": "출발", "at": "09:00", "locked": true },
-        { "placeId": "kyoto-station", "role": "교토 거점", "locked": true, "note": "교토 오가는 노선 선택지는 data/transit.json" }
+        {
+          "placeId": "hotel",
+          "role": "출발",
+          "at": "09:00",
+          "locked": true
+        },
+        {
+          "placeId": "kyoto-station",
+          "role": "교토 거점",
+          "locked": true,
+          "note": "교토 오가는 노선 선택지는 data/transit.json"
+        }
       ],
-      "freeWindow": { "startPlaceId": "hotel", "start": "09:00", "endPlaceId": "hotel", "returnBy": "21:00" },
-      "meals": {
-        "lunch": { "start": "11:30", "end": "14:00", "minutes": 60 },
-        "dinner": { "start": "17:30", "end": "20:00", "minutes": 60 }
+      "freeWindow": {
+        "startPlaceId": "hotel",
+        "start": "09:00",
+        "endPlaceId": "hotel",
+        "returnBy": "21:00"
       },
-      "longHaulRoutes": ["osaka-kyoto-kawaramachi", "osaka-kyoto-station"]
+      "longHaulRoutes": [
+        "osaka-kyoto-kawaramachi",
+        "osaka-kyoto-station"
+      ]
     },
     {
       "date": "2026-11-25",
@@ -61,13 +92,33 @@
       "city": "USJ",
       "note": "유일한 필수 장소. 하루 종일 USJ라 후보를 넣지 않음",
       "fixed": [
-        { "placeId": "hotel", "role": "출발", "at": "07:30", "locked": true, "estimated": true },
-        { "placeId": "usj", "role": "입장", "at": "08:30", "locked": true, "estimated": true, "note": "개장 시각 확인 후 수정. 슈퍼 닌텐도 월드 입장 방식 확인" },
-        { "placeId": "usj", "role": "퇴장", "at": "20:00", "locked": true, "estimated": true }
+        {
+          "placeId": "hotel",
+          "role": "출발",
+          "at": "07:30",
+          "locked": true,
+          "estimated": true
+        },
+        {
+          "placeId": "usj",
+          "role": "입장",
+          "at": "08:30",
+          "locked": true,
+          "estimated": true,
+          "note": "개장 시각 확인 후 수정. 슈퍼 닌텐도 월드 입장 방식 확인"
+        },
+        {
+          "placeId": "usj",
+          "role": "퇴장",
+          "at": "20:00",
+          "locked": true,
+          "estimated": true
+        }
       ],
       "freeWindow": null,
-      "meals": null,
-      "longHaulRoutes": ["usj-osaka"]
+      "longHaulRoutes": [
+        "usj-osaka"
+      ]
     },
     {
       "date": "2026-11-26",
@@ -76,16 +127,36 @@
       "city": "오사카",
       "note": "17:35 출국, 16:05 KIX 도착 목표",
       "fixed": [
-        { "placeId": "hotel", "role": "체크아웃·짐 맡기기", "at": "09:00", "locked": true },
-        { "placeId": "hotel", "role": "짐 찾기", "at": "14:35", "minutes": 10, "locked": true },
-        { "placeId": "kix", "role": "도착 목표", "at": "16:05", "locked": true }
+        {
+          "placeId": "hotel",
+          "role": "체크아웃·짐 맡기기",
+          "at": "09:00",
+          "locked": true
+        },
+        {
+          "placeId": "hotel",
+          "role": "짐 찾기",
+          "at": "14:35",
+          "minutes": 10,
+          "locked": true
+        },
+        {
+          "placeId": "kix",
+          "role": "도착 목표",
+          "at": "16:05",
+          "locked": true
+        }
       ],
-      "freeWindow": { "startPlaceId": "hotel", "start": "09:15", "endPlaceId": "hotel", "returnBy": "14:35", "deadlineKind": "airport" },
-      "meals": {
-        "lunch": { "start": "11:30", "end": "14:00", "minutes": 60 },
-        "dinner": null
+      "freeWindow": {
+        "startPlaceId": "hotel",
+        "start": "09:15",
+        "endPlaceId": "hotel",
+        "returnBy": "14:35",
+        "deadlineKind": "airport"
       },
-      "longHaulRoutes": ["kix-osaka"]
+      "longHaulRoutes": [
+        "kix-osaka"
+      ]
     }
   ]
 }

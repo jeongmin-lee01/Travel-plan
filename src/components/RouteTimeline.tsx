@@ -36,17 +36,6 @@ function LegRow({ leg }: { leg: TravelLeg }) {
   )
 }
 
-function MealRow({ stop }: { stop: StopPlan }) {
-  return (
-    <div className="my-1 rounded-card border-2 border-dashed border-line px-4 py-3">
-      <p className="font-display text-lg">
-        {stop.mealKind === 'lunch' ? '점심' : '저녁'} {toHHMM(stop.start)}~{toHHMM(stop.end)}
-      </p>
-      <p className="text-[0.875rem] text-ink-soft">식당은 아직 정하지 않았어요</p>
-    </div>
-  )
-}
-
 function FixedCard({ item, place }: { item: DayConfig['fixed'][number]; place?: Place }) {
   const title = place?.name.ko ?? item.placeId
   const body = (
@@ -183,8 +172,7 @@ export default function RouteTimeline({ data, day, plan, api }: { data: EngineDa
       {placeStops.length > 0 && (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
           <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-            {stops.map((s, i) => {
-              if (s.kind === 'meal') return <MealRow key={`m${i}`} stop={s} />
+            {stops.map((s) => {
               const place = byId.get(s.placeId!)!
               const n = ids.indexOf(place.id) + 1
               return (
