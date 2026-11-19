@@ -65,12 +65,6 @@
           "role": "출발",
           "at": "09:00",
           "locked": true
-        },
-        {
-          "placeId": "kyoto-station",
-          "role": "교토 거점",
-          "locked": true,
-          "note": "교토 오가는 노선 선택지는 data/transit.json"
         }
       ],
       "freeWindow": {

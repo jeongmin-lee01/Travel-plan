@@ -4,7 +4,6 @@ import {
   computePlan,
   defaultData,
   emptyState,
-  entryKey,
   reoptimize,
   toggle,
   updateEntry,
@@ -21,28 +20,12 @@ import {
   type NewCandidateInput,
   type UserData,
 } from './userData'
+import { buildBackup, DEFAULT_SETTINGS, parseBackup, sanitizeSettings, sanitizeState, type Settings } from './backup'
 
 const KEY = 'travel-plan:state:v2'
 const OLD_KEY = 'travel-plan:state:v1'
 const USER_KEY = 'travel-plan:userdata:v1'
-
-/** 저장된 상태에서 지금 데이터에 없는 장소·날짜는 걸러낸다(데이터가 바뀌어도 앱이 깨지지 않게) */
-function sanitize(raw: unknown, customIds: string[]): PlanState {
-  const s = emptyState()
-  if (!raw || typeof raw !== 'object') return s
-  const { checked, manualOrder } = raw as Partial<PlanState>
-  const dates = new Set(defaultData.itinerary.days.filter((d) => d.freeWindow).map((d) => d.date))
-  const ids = new Set([...defaultData.places.filter((p) => p.type === 'candidate').map((p) => p.id), ...customIds])
-  for (const [k, e] of Object.entries(checked ?? {})) {
-    // 예전 형식(키가 곧 후보 id, 후보당 한 날짜)도 읽어 들인다
-    const placeId = e?.placeId ?? k
-    if (e && ids.has(placeId) && dates.has(e.day)) s.checked[entryKey(placeId, e.day)] = { ...e, placeId }
-  }
-  for (const [date, order] of Object.entries(manualOrder ?? {})) {
-    if (dates.has(date) && Array.isArray(order)) s.manualOrder[date] = order.filter((id) => s.checked[entryKey(id, date)])
-  }
-  return s
-}
+const SETTINGS_KEY = 'travel-plan:settings:v1'
 
 function loadJson<T>(key: string, parse: (raw: unknown) => T): T | null {
   try {
@@ -76,14 +59,16 @@ export function usePlan() {
   const [userData, setUserData] = useState<UserData>(() => loadJson(USER_KEY, sanitizeUserData) ?? emptyUserData())
   const [state, setState] = useState<PlanState>(() => {
     const customIds = userData.custom.map((p) => p.id)
-    return loadJson(KEY, (raw) => sanitize(raw, customIds)) ?? loadJson(OLD_KEY, (raw) => sanitize(raw, customIds)) ?? emptyState()
+    return loadJson(KEY, (raw) => sanitizeState(raw, customIds)) ?? loadJson(OLD_KEY, (raw) => sanitizeState(raw, customIds)) ?? emptyState()
   })
+  const [settings, setSettingsState] = useState<Settings>(() => loadJson(SETTINGS_KEY, sanitizeSettings) ?? DEFAULT_SETTINGS)
   const [toast, setToast] = useState<Toast | null>(null)
 
   const data = useMemo(() => applyUserData(defaultData, userData), [userData])
 
   useEffect(() => saveJson(KEY, state), [state])
   useEffect(() => saveJson(USER_KEY, userData), [userData])
+  useEffect(() => saveJson(SETTINGS_KEY, settings), [settings])
   useEffect(() => {
     if (!toast) return
     const t = setTimeout(() => setToast(null), toast.caution ? 10000 : 7000)
@@ -196,6 +181,27 @@ export function usePlan() {
   const reoptimizeDay = useCallback((date: DateStr) => setState((s) => reoptimize(s, date)), [])
   const setStay = useCallback((id: string, date: DateStr, minutes: number) => setState((s) => updateEntry(s, id, date, { stayMinutes: minutes })), [])
   const setPin = useCallback((id: string, date: DateStr, time: number | undefined) => setState((s) => updateEntry(s, id, date, { pinTime: time })), [])
+  const setSettings = useCallback((next: Settings) => setSettingsState(sanitizeSettings(next)), [])
+
+  /** 체크·순서·내가 추가한 후보·설정을 JSON 문자열로 만든다 */
+  const exportBackup = useCallback(() => JSON.stringify(buildBackup(state, userData, settings), null, 2), [state, userData, settings])
+
+  /** 백업 파일 내용으로 지금 데이터를 통째로 바꾼다. 실패하면 이유를 돌려준다 */
+  const importBackup = useCallback((text: string): { ok: boolean; reason?: string } => {
+    const r = parseBackup(text)
+    if (!r.ok) return { ok: false, reason: r.reason }
+    setState(r.state)
+    setUserData(r.userData)
+    setSettingsState(r.settings)
+    return { ok: true }
+  }, [])
+
+  /** 체크·순서·직접 추가·위치 수정을 모두 지우고 처음 상태로 돌린다(환율은 유지) */
+  const resetAll = useCallback(() => {
+    setState(emptyState())
+    setUserData(emptyUserData())
+  }, [])
+
   const undo = useCallback(() => {
     toast?.undo?.()
     setToast(null)
@@ -205,6 +211,11 @@ export function usePlan() {
     data,
     state,
     userData,
+    settings,
+    setSettings,
+    exportBackup,
+    importBackup,
+    resetAll,
     plans,
     planOf,
     toast,

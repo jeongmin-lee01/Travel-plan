@@ -12,10 +12,10 @@ const SECTIONS: { title: string; tones: CheckTone[]; badge: BadgeTone; label: st
 ]
 
 /** 오른쪽 탭: 지금 동선에서 확인·예약이 필요한 것들 */
-export default function CheckPage({ items }: { items: CheckItem[] }) {
+export default function CheckPage({ items, onSettings }: { items: CheckItem[]; onSettings: () => void }) {
   return (
     <>
-      <PageHeader title="확인 필요" sub={items.length ? `${items.length}건 · 동선에 넣은 곳 기준이에요` : undefined} />
+      <PageHeader onSettings={onSettings} title="확인 필요" sub={items.length ? `${items.length}건 · 동선에 넣은 곳 기준이에요` : undefined} />
       {items.length === 0 && (
         <EmptyState title="확인할 게 없어요" hint="후보를 체크하면 예약이나 영업시간 확인이 필요한 곳이 여기에 모여요." />
       )}

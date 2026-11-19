@@ -131,7 +131,13 @@ export default function DayView({ data, day, plan, api }: { data: EngineData; da
               <Stat
                 label="교통비"
                 value={`${fmtNum(sch.totals.fareYen)}엔`}
-                sub={sch.totals.fixedLegFareYen > 0 ? `${fixedLegName(day)} ${fmtNum(sch.totals.fixedLegFareYen)}엔 포함 · 추정` : '추정'}
+                sub={[
+                  `약 ${fmtNum(sch.totals.fareYen * api.settings.yenToWon)}원`,
+                  sch.totals.fixedLegFareYen > 0 ? `${fixedLegName(day)} ${fmtNum(sch.totals.fixedLegFareYen)}엔 포함` : '',
+                  '추정',
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
               />
               {fw && count > 0 && (
                 <Stat
