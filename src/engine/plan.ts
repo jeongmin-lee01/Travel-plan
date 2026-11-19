@@ -4,22 +4,26 @@ import type {
   DayPlan,
   DayRank,
   DaySchedule,
-  DropSuggestion,
   EngineData,
   Flag,
+  Place,
   PlanDiff,
   PlanState,
   ToggleResult,
 } from '../types'
 import { optimizeDay } from './optimize'
-import { makeCtx, placeIndex, simulate } from './schedule'
+import { fixedLegs, makeCtx, placeIndex, simulate } from './schedule'
 import { makeTravel, type TravelFn } from './travel'
 
 /**
- * 체크리스트 모델: 상태(PlanState)는 "어떤 후보를 체크했는가"뿐이다.
+ * 체크리스트 모델: 상태(PlanState)는 "어떤 후보를 어느 날에 체크했는가"뿐이다.
+ * 같은 후보를 여러 날에 체크할 수 있고, 날짜별로 따로 체크·해제한다.
  * 동선은 상태에서 매번 계산해 내므로, 상태(JSON)를 저장·내보내기만 하면 어디서든 같은 동선이 나온다.
  */
 export const emptyState = (): PlanState => ({ checked: {}, manualOrder: {} })
+
+/** 체크 항목의 키: 후보 + 날짜 */
+export const entryKey = (placeId: string, date: DateStr): string => `${placeId}@${date}`
 
 const travelCache = new WeakMap<EngineData, TravelFn>()
 function travelFor(data: EngineData): TravelFn {
@@ -37,20 +41,41 @@ function dayConfig(data: EngineData, date: DateStr) {
   return day
 }
 
+/** 그날 체크된 후보들(체크한 순서) */
 export const idsOnDay = (state: PlanState, date: DateStr): string[] =>
-  Object.entries(state.checked)
-    .filter(([, e]) => e.day === date)
-    .map(([id]) => id)
+  Object.values(state.checked)
+    .filter((e) => e.day === date)
+    .map((e) => e.placeId)
 
-const EMPTY_SCHEDULE = (date: DateStr): DaySchedule => ({
-  date,
-  stops: [],
-  endArrive: 0,
-  totals: { travelMin: 0, waitMin: 0, fareYen: 0, steps: 0 },
-  flags: [],
-  feasible: true,
-  cost: 0,
-})
+/** 이 후보를 체크해 둔 날짜들 */
+export const daysOf = (state: PlanState, placeId: string): DateStr[] =>
+  Object.values(state.checked)
+    .filter((e) => e.placeId === placeId)
+    .map((e) => e.day)
+
+/** 후보를 넣을 수 없는 날(하루 종일 일정)의 일정: 고정 이동(숙소 ↔ USJ)만 합계에 들어간다 */
+const fixedOnlySchedule = (data: EngineData, date: DateStr): DaySchedule => {
+  const legs = fixedLegs(dayConfig(data, date), placeIndex(data), travelFor(data))
+  const minutes = legs.reduce((a, l) => a + l.minutes, 0)
+  const fare = legs.reduce((a, l) => a + l.fareYen, 0)
+  return {
+    date,
+    stops: [],
+    endArrive: 0,
+    totals: {
+      travelMin: minutes,
+      waitMin: 0,
+      fareYen: fare,
+      steps: legs.reduce((a, l) => a + l.steps, 0),
+      bufferMin: 0,
+      fixedLegMin: minutes,
+      fixedLegFareYen: fare,
+    },
+    flags: [],
+    feasible: true,
+    cost: 0,
+  }
+}
 
 // 상태 객체는 바뀔 때마다 새로 만들어지므로(불변), 같은 상태·날짜의 계산 결과는 재사용한다
 const dayCache = new WeakMap<EngineData, WeakMap<PlanState, Map<DateStr, DayPlan>>>()
@@ -68,7 +93,7 @@ export function computeDay(data: EngineData, state: PlanState, date: DateStr): D
 
 function computeDayUncached(data: EngineData, state: PlanState, date: DateStr): DayPlan {
   const day = dayConfig(data, date)
-  if (!day.freeWindow) return { date, order: [], manual: false, schedule: EMPTY_SCHEDULE(date) }
+  if (!day.freeWindow) return { date, order: [], manual: false, schedule: fixedOnlySchedule(data, date) }
   const c = makeCtx(data, day, state.checked, travelFor(data))
   const ids = idsOnDay(state, date)
   const manual = state.manualOrder[date]
@@ -103,23 +128,30 @@ function diffOf(before: DayPlan, after: DayPlan): PlanDiff {
   }
 }
 
-const withEntry = (state: PlanState, id: string, entry: CheckedEntry): PlanState => ({
+const withEntry = (state: PlanState, entry: CheckedEntry): PlanState => ({
   ...state,
-  checked: { ...state.checked, [id]: entry },
+  checked: { ...state.checked, [entryKey(entry.placeId, entry.day)]: entry },
 })
 
-function withoutEntry(state: PlanState, id: string): PlanState {
-  const entry = state.checked[id]
+/** 한 날의 체크를 뺀다 */
+function withoutEntry(state: PlanState, placeId: string, date: DateStr): PlanState {
   const checked = { ...state.checked }
-  delete checked[id]
+  delete checked[entryKey(placeId, date)]
   const manualOrder = { ...state.manualOrder }
-  if (entry && manualOrder[entry.day]) manualOrder[entry.day] = manualOrder[entry.day].filter((x) => x !== id)
+  if (manualOrder[date]) manualOrder[date] = manualOrder[date].filter((x) => x !== placeId)
   return { checked, manualOrder }
+}
+
+/** 이 후보의 체크를 모든 날에서 뺀다(후보 목록에서 제거할 때) */
+export function withoutPlace(state: PlanState, placeId: string): PlanState {
+  let next = state
+  for (const d of daysOf(state, placeId)) next = withoutEntry(next, placeId, d)
+  return next
 }
 
 type Extra = { stayMinutes?: number; pinTime?: number }
 
-/** 후보를 각 날에 넣었을 때의 비용·가능 여부. 앞쪽일수록 잘 맞는 날 */
+/** 후보를 각 날에 넣었을 때의 비용·가능 여부. 앞쪽일수록 잘 맞는 날(추천용) */
 export function rankDays(
   data: EngineData,
   state: PlanState,
@@ -136,8 +168,13 @@ export function rankDays(
       continue
     }
     const before = computeDay(data, state, day.date)
-    const entry: CheckedEntry = { day: day.date, ...(opts.stayMinutes !== undefined && { stayMinutes: opts.stayMinutes }), ...(opts.pinTime !== undefined && { pinTime: opts.pinTime }) }
-    const after = computeDay(data, withEntry(state, placeId, entry), day.date)
+    const entry: CheckedEntry = {
+      placeId,
+      day: day.date,
+      ...(opts.stayMinutes !== undefined && { stayMinutes: opts.stayMinutes }),
+      ...(opts.pinTime !== undefined && { pinTime: opts.pinTime }),
+    }
+    const after = computeDay(data, withEntry(state, entry), day.date)
     const feasible = after.schedule.feasible
     out.push({
       day: day.date,
@@ -169,78 +206,94 @@ function chainFlags(data: EngineData, state: PlanState, date: DateStr): Flag[] {
   return flags
 }
 
-/** 이 후보를 넣으려면 무엇을 빼야 하는지 */
-function dropSuggestions(data: EngineData, state: PlanState, placeId: string, date: DateStr, extra: Extra): DropSuggestion[] {
-  const out: DropSuggestion[] = []
-  for (const id of idsOnDay(state, date)) {
-    if (state.checked[id].pinTime !== undefined) continue
-    const trimmed = withoutEntry(state, id)
-    const entry: CheckedEntry = { day: date, ...extra }
-    const after = computeDay(data, withEntry(trimmed, placeId, entry), date)
-    out.push({ dropPlaceId: id, makesFeasible: after.schedule.feasible })
+const SKIP_FLAGS = new Set(['closed-day', 'reservation-missing', 'hours-unverified', 'chain-duplicate'])
+
+/**
+ * 체크할 때 알려 줄 주의 문구. 체크를 막지는 않는다.
+ * 예) "Day 1에 이미 추가된 장소예요", "교토 지역이에요 · Day 2에 가는 걸 추천해요"
+ */
+function cautionsFor(data: EngineData, p: Place, date: DateStr, state: PlanState, after: DayPlan, otherDays: DateStr[]): string[] {
+  const label = (d: DateStr) => data.itinerary.days.find((x) => x.date === d)?.label ?? d
+  const day = dayConfig(data, date)
+  const out: string[] = []
+
+  if (otherDays.length) out.push(`${otherDays.map(label).join('·')}에 이미 추가된 장소예요`)
+
+  const recommend = p.availableDates.length
+    ? ` · ${p.availableDates.map(label).join('·')}에 가는 걸 추천해요`
+    : ''
+  const placeCity = p.area.split('-')[0]
+  if (p.closedDates?.includes(date)) {
+    out.push(`이 날은 휴무일이에요${recommend}`)
+  } else if ((placeCity === '오사카' || placeCity === '교토') && placeCity !== day.city) {
+    out.push(`${placeCity} 지역이에요${recommend}`)
+  } else if (!p.availableDates.includes(date)) {
+    out.push(`이 날은 갈 수 없는 날로 조사됐어요${recommend}`)
   }
-  return out.sort((a, b) => Number(b.makesFeasible) - Number(a.makesFeasible))
+
+  // 이 장소 때문에 생긴 경고와 하루 전체의 규칙 위반(공항·귀가 시각 등)
+  for (const f of after.schedule.flags) {
+    if (SKIP_FLAGS.has(f.code) || f.severity === 'info') continue
+    if (f.placeId && f.placeId !== p.id) continue
+    out.push(f.message)
+  }
+  for (const f of chainFlags(data, state, date)) out.push(f.message)
+  return [...new Set(out)]
 }
 
 /**
- * 체크리스트에서 후보를 체크/해제한다.
- * - 체크: 그 시점에 가장 잘 맞는 날(opts.day로 지정 가능)에 바로 넣고 순서를 다시 계산한다.
- *   넣을 수 없으면 state는 그대로 두고 action='blocked'와 이유·제안을 돌려준다.
- * - 해제: 동선에서 빼고(삭제 아님, 후보로 복귀) 순서를 다시 계산한다.
+ * 체크리스트에서 후보를 그 날짜에 체크/해제한다.
+ * - 체크: 그 날 동선에 넣고 순서를 다시 계산한다. 막지 않고, 주의할 점은 cautions로 알려 준다.
+ *   (같은 후보를 여러 날에 체크할 수 있다.)
+ * - 해제: 그 날 동선에서만 뺀다(삭제 아님, 후보로 복귀).
+ * 위치가 없어 계산할 수 없는 후보와 하루 종일 일정(USJ)인 날만 막는다.
  */
 export function toggle(
   data: EngineData,
   state: PlanState,
   placeId: string,
-  opts: { day?: DateStr } & Extra = {},
+  opts: { day: DateStr } & Extra,
 ): ToggleResult {
   const p = placeIndex(data).get(placeId)
   if (!p) throw new Error(`장소를 찾을 수 없어요: ${placeId}`)
-  const blocked = (reason: string, rankedDays: DayRank[] = [], drops: DropSuggestion[] = [], flags: Flag[] = []): ToggleResult => ({
-    action: 'blocked', placeId, state, flags, rankedDays, dropSuggestions: drops, reason,
+  const date = opts.day
+  const blocked = (reason: string, flags: Flag[] = []): ToggleResult => ({
+    action: 'blocked', placeId, day: date, state, flags, cautions: [], reason,
   })
 
-  const existing = state.checked[placeId]
-  if (existing) {
-    const before = computeDay(data, state, existing.day)
-    const next = withoutEntry(state, placeId)
-    const after = computeDay(data, next, existing.day)
+  const key = entryKey(placeId, date)
+  if (state.checked[key]) {
+    const before = computeDay(data, state, date)
+    const next = withoutEntry(state, placeId, date)
+    const after = computeDay(data, next, date)
     return {
-      action: 'removed', placeId, day: existing.day, state: next,
+      action: 'removed', placeId, day: date, state: next,
       before: before.schedule, after: after.schedule, diff: diffOf(before, after),
-      flags: [...after.schedule.flags, ...chainFlags(data, next, existing.day)], rankedDays: [], dropSuggestions: [],
+      flags: [...after.schedule.flags, ...chainFlags(data, next, date)], cautions: [],
     }
   }
 
   if (p.type !== 'candidate') return blocked('고정 장소는 체크리스트에 없어요')
   if (p.lat === null || p.lng === null) {
-    return blocked('좌표가 없어서 동선에 넣을 수 없어요. 구글맵에서 위치를 확인해 입력해 주세요', [], [], [
+    return blocked('좌표가 없어서 동선에 넣을 수 없어요. 구글맵에서 위치를 확인해 입력해 주세요', [
       { code: 'no-coords', severity: 'block', placeId, message: `${p.name.ko}: 좌표 필요` },
     ])
   }
+  const day = dayConfig(data, date)
+  if (!day.freeWindow) return blocked(`${day.label}은 하루 종일 일정이라 후보를 넣을 수 없어요`)
 
-  const extra: Extra = { stayMinutes: opts.stayMinutes, pinTime: opts.pinTime }
-  const ranked = rankDays(data, state, placeId, { day: opts.day, ...extra })
-  const chosen = ranked.find((r) => r.feasible)
-  if (!chosen) {
-    const target = ranked.find((r) => !r.unavailable)
-    if (!target) return blocked(opts.day ? `${opts.day}에는 갈 수 없어요 (휴무 또는 지역이 맞지 않아요)` : '11/23~26 중 갈 수 있는 날이 없어요', ranked)
-    return blocked(
-      `넣으면 일정이 안 맞아요: ${target.reason ?? '시간이 부족해요'}`,
-      ranked,
-      dropSuggestions(data, state, placeId, target.day, extra),
-    )
-  }
-
-  const date = chosen.day
+  const otherDays = daysOf(state, placeId).filter((d) => d !== date)
   const before = computeDay(data, state, date)
-  const entry: CheckedEntry = { day: date, ...(extra.stayMinutes !== undefined && { stayMinutes: extra.stayMinutes }), ...(extra.pinTime !== undefined && { pinTime: extra.pinTime }) }
-  let next = withEntry(state, placeId, entry)
+  const entry: CheckedEntry = {
+    placeId,
+    day: date,
+    ...(opts.stayMinutes !== undefined && { stayMinutes: opts.stayMinutes }),
+    ...(opts.pinTime !== undefined && { pinTime: opts.pinTime }),
+  }
+  let next = withEntry(state, entry)
 
   // 손으로 정한 순서가 있으면 그 순서를 지키고, 새 장소는 가장 덜 돌아가는 자리에 끼워 넣는다
-  const manual = state.manualOrder[date]
-  if (manual) {
-    const day = dayConfig(data, date)
+  if (state.manualOrder[date]) {
     const c = makeCtx(data, day, next.checked, travelFor(data))
     const base = before.order
     let bestPos = base.length
@@ -262,7 +315,7 @@ export function toggle(
     action: 'added', placeId, day: date, state: next,
     before: before.schedule, after: after.schedule, diff: diffOf(before, after),
     flags: [...after.schedule.flags, ...chainFlags(data, next, date)],
-    rankedDays: ranked, dropSuggestions: [],
+    cautions: cautionsFor(data, p, date, next, after, otherDays),
   }
 }
 
@@ -278,9 +331,9 @@ export function reoptimize(state: PlanState, date: DateStr): PlanState {
   return { ...state, manualOrder }
 }
 
-/** 체류시간·고정 시각 수정 */
-export function updateEntry(state: PlanState, placeId: string, patch: Partial<Omit<CheckedEntry, 'day'>>): PlanState {
-  const e = state.checked[placeId]
+/** 그 날 체류시간·고정 시각 수정 */
+export function updateEntry(state: PlanState, placeId: string, date: DateStr, patch: Partial<Pick<CheckedEntry, 'stayMinutes' | 'pinTime'>>): PlanState {
+  const e = state.checked[entryKey(placeId, date)]
   if (!e) return state
-  return withEntry(state, placeId, { ...e, ...patch })
+  return withEntry(state, { ...e, ...patch })
 }

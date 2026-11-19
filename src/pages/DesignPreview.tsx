@@ -52,6 +52,7 @@ export default function DesignPreview() {
           <Button variant="ghost">자세히</Button>
         </section>
         <section className="flex items-center gap-3">
+          <MapMarker kind="home" />
           <MapMarker kind="fixed" n={1} />
           <MapMarker kind="route" n={2} />
           <MapMarker kind="candidate" />

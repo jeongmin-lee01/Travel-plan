@@ -1,15 +1,24 @@
 import type { ReactNode } from 'react'
-import { BagIcon, RouteIcon, TicketIcon } from './Icons'
+import { AlertIcon, ChecklistIcon, RouteIcon } from './Icons'
 
-export type Tab = 'route' | 'wishlist' | 'coupon'
+export type Tab = 'route' | 'candidates' | 'checks'
 
 const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   { id: 'route', label: '동선', icon: <RouteIcon /> },
-  { id: 'wishlist', label: '위시리스트', icon: <BagIcon /> },
-  { id: 'coupon', label: '쿠폰', icon: <TicketIcon /> },
+  { id: 'candidates', label: '후보', icon: <ChecklistIcon /> },
+  { id: 'checks', label: '확인 필요', icon: <AlertIcon /> },
 ]
 
-export default function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab) => void }) {
+export default function TabBar({
+  tab,
+  onChange,
+  badges = {},
+}: {
+  tab: Tab
+  onChange: (t: Tab) => void
+  /** 탭 아이콘 오른쪽 위에 보여줄 개수 */
+  badges?: Partial<Record<Tab, number>>
+}) {
   return (
     <nav
       aria-label="주 메뉴"
@@ -17,6 +26,7 @@ export default function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab)
     >
       {TABS.map((t) => {
         const active = tab === t.id
+        const badge = badges[t.id] ?? 0
         return (
           <button
             key={t.id}
@@ -25,15 +35,21 @@ export default function TabBar({ tab, onChange }: { tab: Tab; onChange: (t: Tab)
             className="flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5"
           >
             <span
-              className={`flex h-8 w-16 items-center justify-center rounded-full transition-colors ${
+              className={`relative flex h-8 w-16 items-center justify-center rounded-full transition-colors ${
                 active ? 'bg-accent text-ink' : 'text-ink-soft'
               }`}
             >
               {t.icon}
+              {badge > 0 && (
+                <span
+                  aria-label={`${badge}건`}
+                  className="font-display absolute -top-1 right-0 flex h-5 min-w-5 items-center justify-center rounded-full bg-reserve px-1 text-[0.75rem] leading-none text-white"
+                >
+                  {badge}
+                </span>
+              )}
             </span>
-            <span className={`text-[0.8125rem] ${active ? 'font-display text-ink' : 'text-ink-soft'}`}>
-              {t.label}
-            </span>
+            <span className={`text-[0.8125rem] ${active ? 'font-display text-ink' : 'text-ink-soft'}`}>{t.label}</span>
           </button>
         )
       })}

@@ -18,6 +18,18 @@ function kyotoZone(p: Place): 'kyoto-station' | 'kyoto-kawaramachi' {
   return p.id === 'kyoto-station' || p.area.includes('교토역') ? 'kyoto-station' : 'kyoto-kawaramachi'
 }
 
+/**
+ * 오사카메트로 운임(2023-04 개정, 거리별 5구간): 3km 이하 190엔 / 7km 이하 240 / 13km 이하 290 / 19km 이하 340 / 그 이상 390.
+ * 거리는 직선 거리 × 굴곡계수로 근사한 값이라 구간 경계에서는 실제와 한 구간 차이가 날 수 있다.
+ */
+function osakaMetroFare(meters: number): number {
+  const km = meters / 1000
+  return km <= 3 ? 190 : km <= 7 ? 240 : km <= 13 ? 290 : km <= 19 ? 340 : 390
+}
+
+/** 교토 시영 지하철 최저 운임(교토 시내 이동). 시버스 균일 운임은 230엔 */
+const KYOTO_LOCAL_FARE = 220
+
 /** 숙소(오사카)와 이어지는 장거리 노선 id. 오사카 장소는 null */
 function hubRouteId(p: Place): string | null {
   switch (cityOf(p)) {
@@ -83,13 +95,15 @@ export function makeTravel(data: EngineData, routeChoice: Record<string, string>
       }
     }
     const meters = haversineM(a, b) * d.detourFactor
-    if (meters <= d.walkMaxMeters) {
-      const minutes = Math.ceil(meters / d.walkMetersPerMin)
-      return { mode: 'walk', minutes, fareYen: 0, steps: minutes * d.stepsPerWalkMin, estimated: true, mapsUrl: url }
-    }
+    const walkMin = Math.ceil(meters / d.walkMetersPerMin)
     // 전철: 대기·승하차 8분 + 시속 30km
-    const minutes = Math.ceil(8 + meters / 500)
-    const fareYen = Math.min(400, 150 + 30 * Math.ceil(meters / 1000))
+    const trainMin = Math.ceil(8 + meters / 500)
+    // 걷는 쪽이 전철보다 9분 이내로만 더 걸리면 걷는다(요금·환승을 아끼므로). 약 1.6km까지가 이에 해당
+    if (meters <= d.walkMaxMeters || walkMin <= trainMin + 9) {
+      return { mode: 'walk', minutes: walkMin, fareYen: 0, steps: walkMin * d.stepsPerWalkMin, estimated: true, mapsUrl: url }
+    }
+    const minutes = trainMin
+    const fareYen = cityOf(a) === 'kyoto' ? KYOTO_LOCAL_FARE : osakaMetroFare(meters)
     return { mode: 'train', minutes, fareYen, steps: d.stepsPerTrainLeg, estimated: true, mapsUrl: url }
   }
 

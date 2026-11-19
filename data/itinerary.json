@@ -16,7 +16,6 @@
     "stepsPerWalkMin": 114,
     "stepsPerStoreMin": 30,
     "stepsPerTrainLeg": 800,
-    "stepsTarget": 15000,
     "exactSearchMaxStops": 9
   },
   "days": [

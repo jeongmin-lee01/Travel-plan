@@ -14,7 +14,9 @@ export default function ToastView({
   return (
     <div
       role="status"
-      className="fixed inset-x-3 bottom-[5.5rem] z-40 flex items-start gap-3 rounded-2xl bg-ink px-4 py-3 text-paper shadow-card"
+      className={`fixed inset-x-3 bottom-[5.5rem] z-40 flex items-start gap-3 rounded-2xl px-4 py-3 shadow-card ${
+        toast.caution ? 'border-2 border-warn bg-ink text-paper' : 'bg-ink text-paper'
+      }`}
     >
       <div className="min-w-0 flex-1">
         <p className="font-display text-base leading-snug">{toast.message}</p>

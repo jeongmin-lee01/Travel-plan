@@ -10,11 +10,11 @@ import type {
   StopPlan,
 } from '../types'
 import type { TravelFn } from './travel'
+import type { TravelLeg } from '../types'
 import { parseHours, toHHMM, toMin } from './time'
 
 /** 소프트 조건 벌점(분 환산) */
 export const OVERFLOW_PENALTY_PER_MIN = 2
-export const STEPS_PENALTY_PER_STEP = 1 / 60
 
 export interface Ctx {
   day: DayConfig
@@ -46,10 +46,10 @@ export function makeCtx(
 ): Ctx {
   const stay: Record<string, number> = {}
   const pin: Record<string, Minutes> = {}
-  for (const [id, e] of Object.entries(entries)) {
+  for (const e of Object.values(entries)) {
     if (e.day !== day.date) continue
-    if (e.stayMinutes !== undefined) stay[id] = e.stayMinutes
-    if (e.pinTime !== undefined) pin[id] = e.pinTime
+    if (e.stayMinutes !== undefined) stay[e.placeId] = e.stayMinutes
+    if (e.pinTime !== undefined) pin[e.placeId] = e.pinTime
   }
   return { day, places: placeIndex(data), travel, defaults: data.itinerary.defaults, stay, pin }
 }
@@ -64,6 +64,7 @@ export interface SimState {
   fare: number
   steps: number
   penalty: number
+  bufferMin: number
 }
 
 const name = (p: Place) => p.name.ko
@@ -76,7 +77,7 @@ export function initState(c: Ctx): SimState {
   if (!fw) throw new Error(`${c.day.label}은 후보를 넣을 수 있는 빈 시간이 없어요`)
   const cur = c.places.get(fw.startPlaceId)
   if (!cur) throw new Error(`장소를 찾을 수 없어요: ${fw.startPlaceId}`)
-  return { t: toMin(fw.start), cur, stops: [], flags: [], travelMin: 0, waitMin: 0, fare: 0, steps: 0, penalty: 0 }
+  return { t: toMin(fw.start), cur, stops: [], flags: [], travelMin: 0, waitMin: 0, fare: 0, steps: 0, penalty: 0, bufferMin: 0 }
 }
 
 /**
@@ -142,6 +143,7 @@ export function step(s: SimState, p: Place, c: Ctx, strict: boolean): SimState |
     stops: [...s.stops, stop],
     flags: [...s.flags, ...flags],
     travelMin: s.travelMin + leg.minutes,
+    bufferMin: s.bufferMin + buffer,
     waitMin: s.waitMin + (start - arrive),
     fare: s.fare + leg.fareYen,
     steps: s.steps + leg.steps + stay * c.defaults.stepsPerStoreMin,
@@ -161,7 +163,7 @@ export function finish(s: SimState, c: Ctx): DaySchedule {
   const buffer = leg.minutes === 0 ? 0 : leg.mode === 'walk' ? c.defaults.bufferWalkMin : c.defaults.bufferTransitMin
   const endArrive = s.t + leg.minutes + buffer
   const flags = [...s.flags]
-  let penalty = s.penalty
+  const penalty = s.penalty
 
   const returnBy = toMin(fw.returnBy)
   if (endArrive > returnBy) {
@@ -175,23 +177,60 @@ export function finish(s: SimState, c: Ctx): DaySchedule {
     })
   }
 
+  // 걸음 수는 참고용으로만 센다(제한 없음)
   const steps = s.steps + leg.steps
-  if (steps > c.defaults.stepsTarget) {
-    penalty += (steps - c.defaults.stepsTarget) * STEPS_PENALTY_PER_STEP
-    flags.push({ code: 'steps-over', severity: 'warn', message: `예상 ${steps.toLocaleString('ko-KR')}보: 목표 ${c.defaults.stepsTarget.toLocaleString('ko-KR')}보를 넘어요` })
-  }
 
   const travelMin = s.travelMin + leg.minutes
+  // 입국일·출국일의 공항 ↔ 숙소 이동은 일정 계산(순서·시각)과 무관한 고정 이동이지만, 합계에는 넣는다
+  const fixed = fixedLegs(c.day, c.places, c.travel)
+  const fixedMin = fixed.reduce((a, l) => a + l.minutes, 0)
+  const fixedFare = fixed.reduce((a, l) => a + l.fareYen, 0)
+  const fixedSteps = fixed.reduce((a, l) => a + l.steps, 0)
   return {
     date: c.day.date,
     stops: s.stops,
     endArrive,
     returnTravel: leg,
-    totals: { travelMin, waitMin: s.waitMin, fareYen: s.fare + leg.fareYen, steps },
+    totals: {
+      travelMin: travelMin + fixedMin,
+      waitMin: s.waitMin,
+      fareYen: s.fare + leg.fareYen + fixedFare,
+      steps: steps + fixedSteps,
+      bufferMin: s.bufferMin + buffer,
+      fixedLegMin: fixedMin,
+      fixedLegFareYen: fixedFare,
+    },
     flags,
     feasible: !flags.some(isBlock),
+    // 순서를 고르는 비용에는 고정 이동을 넣지 않는다(어떤 순서든 같으므로)
     cost: travelMin + s.waitMin + penalty,
   }
+}
+
+/**
+ * 일정과 상관없이 정해진 이동 구간들.
+ * - 입국일: 공항 → 숙소 / 출국일: 숙소 → 공항 (고정 일정의 간사이공항 시각 기준)
+ * - 하루 종일 일정(USJ)인 날: 숙소 → 고정 장소 → 숙소
+ */
+export function fixedLegs(day: DayConfig, places: Map<string, Place>, travel: TravelFn): TravelLeg[] {
+  const ok = (p?: Place): p is Place => !!p && p.lat !== null && p.lng !== null
+  const fw = day.freeWindow
+  if (fw) {
+    const home = places.get(fw.startPlaceId)
+    const f = day.fixed.find((x) => x.placeId === 'kix')
+    const kix = f ? places.get('kix') : undefined
+    if (!ok(home) || !ok(kix) || !f?.at) return []
+    return toMin(f.at) <= toMin(fw.start) ? [travel(kix, home)] : [travel(home, kix)]
+  }
+  const home = places.get('hotel')
+  if (!ok(home)) return []
+  const legs: TravelLeg[] = []
+  for (const id of new Set(day.fixed.map((x) => x.placeId))) {
+    if (id === 'hotel') continue
+    const p = places.get(id)
+    if (ok(p)) legs.push(travel(home, p), travel(p, home))
+  }
+  return legs
 }
 
 /** 순서를 받아 시각을 시뮬레이션한다. 규칙을 어겨도 멈추지 않고 경고(flag)로 남긴다 */

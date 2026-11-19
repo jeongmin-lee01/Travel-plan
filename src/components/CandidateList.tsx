@@ -1,13 +1,16 @@
 import { useMemo, useState } from 'react'
 import type { DateStr, DayConfig, EngineData, Place } from '../types'
-import { cityOf, defaultData, parseHours, rankDays, toHHMM } from '../engine'
+import { cityOf, daysOf, defaultData, entryKey, parseHours, rankDays, toHHMM } from '../engine'
+import { CATEGORIES } from '../lib/categories'
 import { fmtDate } from '../lib/format'
 import type { PlanApi } from '../store/usePlan'
 import Badge from './Badge'
 import Button from './Button'
 import { Card } from './Card'
 import Chip from './Chip'
+import { isCustom } from '../store/userData'
 import LocationSheet from './LocationSheet'
+import AddCandidateSheet from './AddCandidateSheet'
 import RestoreSheet from './RestoreSheet'
 
 type CityFilter = 'all' | 'osaka' | 'kyoto'
@@ -34,18 +37,23 @@ function dayName(data: EngineData, date: DateStr): string {
   return d ? `${d.label} ${fmtDate(d)}` : date
 }
 
-export default function CandidateList({ data, api, activeDay, onAdded }: { data: EngineData; api: PlanApi; activeDay: DayConfig; onAdded: (date: DateStr) => void }) {
+/**
+ * 후보 체크리스트. 체크는 **위에서 고른 날짜(activeDay) 기준**이다.
+ * 같은 후보를 여러 날에 체크할 수 있고, 막지 않고 주의 문구만 알려 준다.
+ */
+export default function CandidateList({ data, api, activeDay }: { data: EngineData; api: PlanApi; activeDay: DayConfig }) {
   const [city, setCity] = useState<CityFilter>('all')
   const [category, setCategory] = useState('')
-  const [onlyToday, setOnlyToday] = useState(true)
+  const [onlyToday, setOnlyToday] = useState(false)
   const [onlyUnchecked, setOnlyUnchecked] = useState(false)
   const [editing, setEditing] = useState<Place | null>(null)
   const [showRestore, setShowRestore] = useState(false)
+  const [addingCandidate, setAddingCandidate] = useState(false)
   const hiddenPlaces = defaultData.places.filter((p) => api.userData.hidden.includes(p.id))
 
   const candidates = useMemo(() => data.places.filter((p) => p.type === 'candidate'), [data])
-  const categories = useMemo(() => [...new Set(candidates.map((p) => p.category))], [candidates])
-  const checkedCount = candidates.filter((p) => api.state.checked[p.id]).length
+  const isOnActiveDay = (id: string) => !!api.state.checked[entryKey(id, activeDay.date)]
+  const checkedToday = candidates.filter((p) => isOnActiveDay(p.id)).length
 
   /** 가장 잘 맞는 날. 갈 수 있는 날이 하나뿐이면 계산 없이 그날, 여러 날이면 엔진으로 비교 */
   const bestDay = useMemo(() => {
@@ -63,21 +71,15 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
     if (city !== 'all' && cityOf(p) !== city) return false
     if (category && p.category !== category) return false
     if (onlyToday && !p.availableDates.includes(activeDay.date)) return false
-    if (onlyUnchecked && api.state.checked[p.id]) return false
+    if (onlyUnchecked && isOnActiveDay(p.id)) return false
     return true
   })
 
-  const onToggle = (p: Place) => {
-    const r = api.toggleCandidate(p.id, onlyToday ? { day: activeDay.date } : {})
-    if (r.action === 'added' && r.day) onAdded(r.day)
-  }
-
   return (
     <section aria-label="후보 체크리스트" className="space-y-3 px-4">
-      <div>
-        <h2 className="font-display text-2xl">후보 체크리스트</h2>
-        <p className="text-base text-ink-soft">체크하면 동선에 들어가고 순서가 자동으로 정리돼요 · {checkedCount}/{candidates.length}곳 체크</p>
-      </div>
+      <p className="text-base text-ink-soft">
+        <span className="font-bold text-ink">{activeDay.label}</span> 동선에 {checkedToday}곳 체크했어요 · 같은 곳을 여러 날에 체크해도 돼요
+      </p>
 
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
         {(['all', 'osaka', 'kyoto'] as const).map((c) => (
@@ -89,7 +91,7 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
           {activeDay.label}에 갈 수 있는 곳만
         </Chip>
         <Chip active={onlyUnchecked} onClick={() => setOnlyUnchecked((v) => !v)}>
-          동선에 없는 곳만
+          {activeDay.label}에 안 넣은 곳만
         </Chip>
         {hiddenPlaces.length > 0 && <Chip onClick={() => setShowRestore(true)}>제거한 후보 {hiddenPlaces.length}곳</Chip>}
       </div>
@@ -101,7 +103,7 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
           className="min-h-12 w-full rounded-2xl border-2 border-line bg-card px-4 text-base"
         >
           <option value="">모든 카테고리</option>
-          {categories.map((c) => (
+          {CATEGORIES.map((c) => (
             <option key={c} value={c}>
               {c}
             </option>
@@ -109,36 +111,40 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
         </select>
       </label>
 
+      <Button variant="secondary" className="w-full" onClick={() => setAddingCandidate(true)}>
+        + 후보 추가
+      </Button>
+
       {list.length === 0 && <p className="text-base text-ink-soft">조건에 맞는 후보가 없어요. 필터를 바꿔 보세요.</p>}
 
       <ul className="space-y-2">
         {list.map((p) => {
-          const entry = api.state.checked[p.id]
-          const checked = !!entry
+          const checked = isOnActiveDay(p.id)
+          const otherDays = daysOf(api.state, p.id).filter((d) => d !== activeDay.date)
           const noCoords = p.lat === null || p.lng === null
           const availableToday = p.availableDates.includes(activeDay.date)
-          const blockedToday = !checked && !noCoords && !availableToday && onlyToday
-          const disabled = !checked && (noCoords || blockedToday)
           const hrs = parseHours(p, activeDay.date)
           const best = bestDay.get(p.id)
-          const reason = noCoords
+          // 체크는 막지 않는다. 이 날 가기 어려운 곳이면 미리 알려 주기만 한다
+          const heads = noCoords
             ? '위치를 지정하면 체크할 수 있어요'
             : !checked && !availableToday
-              ? `${activeDay.label}에는 갈 수 없어요 (휴무 또는 지역)`
+              ? `${p.area.split('-')[0]} 지역이에요 · ${activeDay.label}에는 맞지 않을 수 있어요`
               : ''
           return (
             <li key={p.id}>
-              <Card className={`flex gap-3 ${disabled ? 'bg-paper-deep' : ''}`}>
+              <Card className="flex gap-3">
                 <Checkbox
                   checked={checked}
-                  disabled={disabled}
-                  label={`${p.name.ko} ${checked ? '동선에서 빼기' : '동선에 추가'}`}
-                  onClick={() => onToggle(p)}
+                  disabled={noCoords}
+                  label={`${p.name.ko} ${checked ? `${activeDay.label} 동선에서 빼기` : `${activeDay.label} 동선에 추가`}`}
+                  onClick={() => api.toggleCandidate(p.id, activeDay.date)}
                 />
-                <div className={`min-w-0 flex-1 ${disabled ? 'text-ink-soft' : ''}`}>
+                <div className="min-w-0 flex-1">
                   <p className="font-display text-lg leading-tight">{p.name.ko}</p>
                   <p className="text-[0.875rem] text-ink-soft">
                     {p.area.replace('-', ' · ')} · {p.category}
+                    {p.categoryDetail && p.categoryDetail !== p.category && ` (${p.categoryDetail})`}
                   </p>
                   <p className="text-base">
                     {hrs ? `영업 ${toHHMM(hrs.open)}–${toHHMM(hrs.close)}` : `영업시간: ${p.hours.text ?? '확인 필요'}`}
@@ -149,19 +155,22 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
                     {p.needsCheck.includes('hours') && <Badge tone="note">시간 확인 필요</Badge>}
                     {p.chainGroup && <span className="text-[0.8125rem] text-ink-soft">같은 그룹: {p.chainGroup.toUpperCase()}</span>}
                   </div>
-                  {checked && (
-                    <p className="mt-1 text-base font-bold">{dayName(data, entry.day)}에 들어 있어요</p>
+                  {checked && <p className="mt-1 text-base font-bold">{activeDay.label} 동선에 들어 있어요</p>}
+                  {otherDays.length > 0 && (
+                    <p className="mt-1 text-[0.875rem] text-ink-soft">
+                      {otherDays.map((d) => dayName(data, d)).join(', ')}에도 들어 있어요
+                    </p>
                   )}
-                  {!checked && best && !reason && (
+                  {!checked && best && !heads && otherDays.length === 0 && (
                     <p className="mt-1 text-[0.875rem] text-ink-soft">가장 잘 맞는 날: {dayName(data, best)}</p>
                   )}
-                  {reason && <p className="mt-1 text-[0.875rem] text-danger">{reason}</p>}
+                  {heads && <p className="mt-1 text-[0.875rem] text-danger">{heads}</p>}
                   <div className="mt-1 flex flex-wrap gap-x-3">
                     <Button variant="ghost" className="px-0 text-base" onClick={() => setEditing(p)}>
                       {noCoords ? '위치 지정' : '위치 수정'}
                     </Button>
                     <Button variant="ghost" className="px-0 text-base" onClick={() => api.removeCandidate(p.id)}>
-                      목록에서 제거
+                      {isCustom(p.id) ? '삭제' : '목록에서 제거'}
                     </Button>
                   </div>
                 </div>
@@ -179,6 +188,7 @@ export default function CandidateList({ data, api, activeDay, onAdded }: { data:
           onSave={(loc) => api.setLocation(editing.id, loc)}
         />
       )}
+      {addingCandidate && <AddCandidateSheet day={activeDay} onClose={() => setAddingCandidate(false)} onSave={api.addCandidate} />}
       <RestoreSheet
         open={showRestore}
         places={hiddenPlaces}

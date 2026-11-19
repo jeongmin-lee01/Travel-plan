@@ -1,31 +1,52 @@
 import type { DayPlan, EngineData, Place } from '../types'
 
+export type CheckTone = 'block' | 'warn' | 'reserve' | 'hours' | 'note'
+
 export interface CheckItem {
-  placeId: string
+  placeId?: string
   name: string
-  tone: 'reserve' | 'hours' | 'note'
+  tone: CheckTone
   title: string
   detail: string
   link?: string | null
-  /** 어느 날 일정에 들어 있는지 */
+  /** 어느 날 일정인지 */
   dayLabel?: string
 }
 
 const RESERVE_KINDS = ['필수', '정리권·추첨']
+/** 장소 카드에서 이미 배지로 보이거나 단순 참고인 경고는 "확인 필요" 목록에 올리지 않는다 */
+const SKIP_FLAGS = new Set(['reservation-missing', 'hours-unverified', 'chain-duplicate'])
 
-/** 동선에 들어 있거나 고정인 장소 중, 예약·정리권·영업시간 확인이 필요한 것을 모은다 */
+/**
+ * 확인이 필요한 것들을 모은다.
+ * 1) 일정 경고: 지금 동선에서 규칙을 어기거나 주의할 점(휴무일·영업시간·공항 시각·걸음 수 등)
+ * 2) 예약·정리권, 영업시간·휴무 확인: 동선에 들어 있거나 고정인 장소 중 정보가 비어 있는 것
+ */
 export function collectChecks(data: EngineData, plans: DayPlan[]): CheckItem[] {
-  const inRoute = new Map<string, string>()
-  for (const plan of plans) {
-    const label = data.itinerary.days.find((d) => d.date === plan.date)?.label
-    for (const id of plan.order) if (label) inRoute.set(id, label)
-  }
-  const relevant: Place[] = data.places.filter((p) => p.type === 'fixed' || inRoute.has(p.id))
-
+  const idToName = new Map(data.places.map((p) => [p.id, p.name.ko]))
+  const dayLabel = (date: string) => data.itinerary.days.find((d) => d.date === date)?.label
+  /** 후보 → 들어 있는 날짜들 */
+  const inRoute = new Map<string, string[]>()
   const items: CheckItem[] = []
+
+  for (const plan of plans) {
+    for (const id of plan.order) inRoute.set(id, [...(inRoute.get(id) ?? []), dayLabel(plan.date) ?? ''])
+    for (const f of plan.schedule.flags) {
+      if (SKIP_FLAGS.has(f.code) || f.severity === 'info') continue
+      items.push({
+        placeId: f.placeId,
+        name: f.placeId ? (idToName.get(f.placeId) ?? f.placeId) : (dayLabel(plan.date) ?? plan.date),
+        tone: f.severity === 'block' ? 'block' : 'warn',
+        title: f.severity === 'block' ? '이 일정은 지킬 수 없어요' : '주의',
+        detail: f.message,
+        dayLabel: dayLabel(plan.date),
+      })
+    }
+  }
+
+  const relevant: Place[] = data.places.filter((p) => p.type === 'fixed' || inRoute.has(p.id))
   for (const p of relevant) {
-    const dayLabel = inRoute.get(p.id)
-    const base = { placeId: p.id, name: p.name.ko, dayLabel }
+    const base = { placeId: p.id, name: p.name.ko, dayLabel: inRoute.get(p.id)?.join('·') || undefined }
     if (RESERVE_KINDS.includes(p.reservation.kind) && !p.myReservation.time) {
       items.push({
         ...base,
@@ -44,6 +65,7 @@ export function collectChecks(data: EngineData, plans: DayPlan[]): CheckItem[] {
       items.push({ ...base, tone: 'note', title: '휴무일 확인 필요', detail: p.exceptions.join(' / ') || '휴무 정보를 확인하지 못했어요' })
     }
   }
-  const order = { reserve: 0, hours: 1, note: 2 } as const
+
+  const order: Record<CheckTone, number> = { block: 0, warn: 1, reserve: 2, hours: 3, note: 4 }
   return items.sort((a, b) => order[a.tone] - order[b.tone])
 }

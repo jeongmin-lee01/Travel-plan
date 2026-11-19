@@ -54,7 +54,7 @@ export default function PickMap({
       ref={ref}
       role="img"
       aria-label="위치를 고르는 지도"
-      className="h-64 w-full overflow-hidden rounded-card border-2 border-line"
+      className="isolate h-64 w-full overflow-hidden rounded-card border-2 border-line"
     />
   )
 }

@@ -14,6 +14,8 @@ export interface Place {
   type: 'fixed' | 'candidate'
   name: { ko: string; ja: string }
   category: string
+  /** 4가지로 묶기 전의 세부 분류(예: 게임센터) */
+  categoryDetail?: string
   address: string | null
   lat: number | null
   lng: number | null
@@ -63,7 +65,6 @@ export interface Defaults {
   stepsPerWalkMin: number
   stepsPerStoreMin: number
   stepsPerTrainLeg: number
-  stepsTarget: number
   exactSearchMaxStops: number
 }
 
@@ -115,7 +116,6 @@ export type FlagCode =
   | 'reservation-missing' // 보라: 예약·정리권 필요한데 내 예약 정보 없음
   | 'reservation-late' // 예약 시각에 못 맞춤
   | 'hours-unverified' // 영업시간 확인 필요
-  | 'steps-over' // 걸음 수 초과
   | 'day-end-late' // 귀가 시각 초과
   | 'airport-deadline' // 공항 도착 시각을 못 맞춤
   | 'chain-duplicate' // 같은 체인 2곳 이상
@@ -160,7 +160,19 @@ export interface DaySchedule {
   /** 숙소(귀가) 도착 시각 */
   endArrive: Minutes
   returnTravel?: TravelLeg
-  totals: { travelMin: number; waitMin: number; fareYen: number; steps: number }
+  totals: {
+    /** 이동 시간(고정 이동 포함, 여유 시간 제외) */
+    travelMin: number
+    waitMin: number
+    /** 교통비(고정 이동 포함) */
+    fareYen: number
+    steps: number
+    /** 이동마다 더하는 여유 시간(10~15분)의 합 */
+    bufferMin: number
+    /** 위 합계에 들어 있는 고정 이동(입국일·출국일 공항 ↔ 숙소, USJ 왕복) */
+    fixedLegMin: number
+    fixedLegFareYen: number
+  }
   flags: Flag[]
   feasible: boolean
   cost: number
@@ -175,7 +187,9 @@ export interface OptimizeResult {
 
 // ───────── 체크리스트 상태(저장되는 데이터) ─────────
 
+/** 후보를 어느 날에 체크했는가. 같은 후보를 여러 날에 체크할 수 있다(날짜마다 한 항목) */
 export interface CheckedEntry {
+  placeId: string
   day: DateStr
   /** 이 시각에 시작하도록 고정(고정 핀·예약 시각) */
   pinTime?: Minutes
@@ -184,6 +198,7 @@ export interface CheckedEntry {
 }
 
 export interface PlanState {
+  /** 키는 `${placeId}@${day}` (engine의 entryKey) */
   checked: Record<string, CheckedEntry>
   /** 손으로 바꾼 순서. 있으면 자동 최적화보다 우선 */
   manualOrder: Record<DateStr, string[]>
@@ -218,12 +233,6 @@ export interface PlanDiff {
   endArriveAfter: Minutes
 }
 
-export interface DropSuggestion {
-  dropPlaceId: string
-  /** 이걸 빼면 후보를 넣을 수 있음 */
-  makesFeasible: boolean
-}
-
 export interface ToggleResult {
   action: 'added' | 'removed' | 'blocked'
   placeId: string
@@ -233,7 +242,7 @@ export interface ToggleResult {
   after?: DaySchedule
   diff?: PlanDiff
   flags: Flag[]
-  rankedDays: DayRank[]
-  dropSuggestions: DropSuggestion[]
+  /** 체크는 막지 않고 주의할 점만 알린다 (예: "Day 1에 이미 추가된 장소예요", "교토 지역이에요") */
+  cautions: string[]
   reason?: string
 }

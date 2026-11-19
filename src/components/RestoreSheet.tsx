@@ -1,3 +1,4 @@
+import { normalizeCategory } from '../lib/categories'
 import type { Place } from '../types'
 import Button from './Button'
 import { Card } from './Card'
@@ -26,7 +27,7 @@ export default function RestoreSheet({
               <Card className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-display text-lg leading-tight">{p.name.ko}</p>
-                  <p className="text-[0.875rem] text-ink-soft">{p.category}</p>
+                  <p className="text-[0.875rem] text-ink-soft">{normalizeCategory(p.category)}</p>
                 </div>
                 <Button variant="secondary" className="shrink-0 text-base" onClick={() => onRestore(p.id)}>
                   복원

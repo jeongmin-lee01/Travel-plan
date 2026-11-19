@@ -9,8 +9,7 @@ export default function FlagBadges({ flags, place }: { flags: Flag[]; place: Pla
       {codes.has('closed-day') && <Badge tone="closed">휴무 · 이 날 불가</Badge>}
       {codes.has('outside-hours') && <Badge tone="hours">영업시간 밖</Badge>}
       {codes.has('after-last-entry') && <Badge tone="hours">마지막 입장 이후</Badge>}
-      {codes.has('reservation-late') && <Badge tone="hours">고정 시각 못 맞춤</Badge>}
-      {codes.has('reservation-missing') && (
+      {codes.has('reservation-late') && <Badge tone="hours">고정 시각 못 맞춤</Badge>}      {codes.has('reservation-missing') && (
         <Badge tone="reserve">{place.reservation.kind === '정리권·추첨' ? '정리권 필요' : '예약 필요'}</Badge>
       )}
       {codes.has('hours-unverified') && <Badge tone="note">영업시간 확인 필요</Badge>}
