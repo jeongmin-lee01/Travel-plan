@@ -63,9 +63,9 @@
       },
       "category": "숙소",
       "address": null,
-      "lat": null,
-      "lng": null,
-      "coordsApprox": false,
+      "lat": 34.6747,
+      "lng": 135.5013,
+      "coordsApprox": true,
       "nearestStation": "신사이바시역(추정)",
       "area": "오사카-신사이바시/난바",
       "availableDates": [
@@ -102,7 +102,7 @@
         "coords",
         "luggageStorage"
       ],
-      "notes": "정확한 주소·좌표는 예약 확인서에서 입력 필요."
+      "notes": "좌표는 신사이바시역 근처 임시값. 정확한 주소·좌표는 예약 확인서에서 입력 필요."
     },
     {
       "id": "usj",
