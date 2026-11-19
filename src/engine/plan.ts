@@ -52,8 +52,21 @@ const EMPTY_SCHEDULE = (date: DateStr): DaySchedule => ({
   cost: 0,
 })
 
+// 상태 객체는 바뀔 때마다 새로 만들어지므로(불변), 같은 상태·날짜의 계산 결과는 재사용한다
+const dayCache = new WeakMap<EngineData, WeakMap<PlanState, Map<DateStr, DayPlan>>>()
+
 /** 그날 동선 계산. 손으로 바꾼 순서가 있으면 그 순서를 지키고 시각·경고만 다시 계산 */
 export function computeDay(data: EngineData, state: PlanState, date: DateStr): DayPlan {
+  let byState = dayCache.get(data)
+  if (!byState) dayCache.set(data, (byState = new WeakMap()))
+  let byDate = byState.get(state)
+  if (!byDate) byState.set(state, (byDate = new Map()))
+  let plan = byDate.get(date)
+  if (!plan) byDate.set(date, (plan = computeDayUncached(data, state, date)))
+  return plan
+}
+
+function computeDayUncached(data: EngineData, state: PlanState, date: DateStr): DayPlan {
   const day = dayConfig(data, date)
   if (!day.freeWindow) return { date, order: [], manual: false, schedule: EMPTY_SCHEDULE(date) }
   const c = makeCtx(data, day, state.checked, travelFor(data))
